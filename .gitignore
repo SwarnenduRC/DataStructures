@@ -1,0 +1,5 @@
+## Ignore IDE specific files
+.vscode/
+
+## Ignore build specific files
+*.dSYM
