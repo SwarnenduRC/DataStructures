@@ -1,5 +1,9 @@
 ## Ignore IDE specific files
 .vscode/
 
+##Ignore build specific files
+bin/
+obj/
+
 ## Ignore build specific files
 *.dSYM
