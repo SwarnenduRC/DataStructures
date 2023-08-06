@@ -334,7 +334,7 @@ namespace swarnendu
         }
     }
 
-    bool SinglyLinkedList::searchList(const int val) noexcept
+    bool SinglyLinkedList::isExists(const int val) noexcept
     {
         if (isEmpty())
             return false;

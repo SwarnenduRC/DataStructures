@@ -37,7 +37,7 @@ namespace swarnendu
             bool deleteAtMiddle();
 
             void displayList() noexcept;
-            bool searchList(const int val) noexcept;
+            bool isExists(const int val) noexcept;
             inline bool isEmpty() noexcept { return m_size ? false : true; }
             inline size_t size() noexcept { return m_size; }
 

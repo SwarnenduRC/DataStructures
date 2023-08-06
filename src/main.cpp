@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <thread>
+#include <exception>
 
 #include "SinglyLinkedListTest.h"
 
@@ -19,8 +20,13 @@ int main (int argc, char** argv)
     std::cout << "=====================================================" << std::endl;
     std::cout << std::endl << std::endl;
 
+    try
     {
         testSinglyLinkedList(argc, argv);
+    }
+    catch(const std::exception& e)
+    {
+        std::cout << std::endl << "Standard exception received: " << e.what() << std::endl;
     }
 
     std::cout << std::endl << std::endl;
