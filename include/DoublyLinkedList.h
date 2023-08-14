@@ -30,6 +30,10 @@ namespace swarnendu
                 if (!rhs.empty())
                 {
                     auto pSrcHead = rhs.m_pHead;
+                    //If we simply copy over the head and tail pointers
+                    //from the source then the linking between head and tail
+                    //proving to be very difficult so rather run a push back
+                    //which automatically does the linking
                     while (pSrcHead)
                     {
                         push_back(pSrcHead->getData());

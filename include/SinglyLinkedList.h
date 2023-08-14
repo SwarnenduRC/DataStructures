@@ -25,20 +25,20 @@ namespace swarnendu
             SinglyLinkedList& operator=(const SinglyLinkedList& rhs) noexcept;
             SinglyLinkedList& operator=(SinglyLinkedList&& rhs) noexcept;
 
-            void clearList();            
-            void insertAtFront(const int val);
-            void insertAtBack(const int val);
-            void insertAtPos(const size_t pos, const int val);
-            void insertAtMiddle(const int val);
+            void clear();            
+            void push_front(const int val);
+            void push_back(const int val);
+            void push_at(const size_t pos, const int val);
+            void push_middle(const int val);
 
-            bool deleteAtFront();
-            bool deleteAtBack();
-            bool deleteAtPos(const size_t pos);
-            bool deleteAtMiddle();
+            bool pop_front();
+            bool pop_back();
+            bool pop_at(const size_t pos);
+            bool pop_middle();
 
-            void displayList() noexcept;
-            bool isExists(const int val) noexcept;
-            inline bool isEmpty() noexcept { return m_size ? false : true; }
+            void display() noexcept;
+            bool find(const int val) noexcept;
+            inline bool empty() noexcept { return m_size ? false : true; }
             inline size_t size() noexcept { return m_size; }
 
         private:

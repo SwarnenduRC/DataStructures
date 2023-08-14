@@ -20,16 +20,16 @@ namespace swarnendu
 {
     SinglyLinkedList::~SinglyLinkedList()
     {
-        if (!isEmpty())
-            clearList();
+        if (!empty())
+            clear();
 
         m_pHead = nullptr;
         m_pTail = nullptr;
     }
 
-    void SinglyLinkedList::clearList()
+    void SinglyLinkedList::clear()
     {
-        if (!isEmpty())
+        if (!empty())
         {
             SinglyNode* pCurrent = nullptr;
             while (m_pHead)
@@ -57,7 +57,7 @@ namespace swarnendu
         if (this != &rhs)
         {
             if (m_pHead || m_pTail)
-                clearList();
+                clear();
 
             copyList(rhs);
         }
@@ -76,7 +76,7 @@ namespace swarnendu
         if (this != &rhs)
         {
             if (m_pHead || m_pTail)
-                clearList();
+                clear();
 
             std::swap(m_pHead, rhs.m_pHead);
             std::swap(m_pTail, rhs.m_pTail);
@@ -110,9 +110,9 @@ namespace swarnendu
         }
     }
 
-    void SinglyLinkedList::insertAtFront(const int val)
+    void SinglyLinkedList::push_front(const int val)
     {
-        if (isEmpty())
+        if (empty())
         {
             auto pNewNode = new SinglyNode();
             pNewNode->m_element = val;
@@ -129,9 +129,9 @@ namespace swarnendu
         ++m_size;
     }
 
-    void SinglyLinkedList::insertAtBack(const int val)
+    void SinglyLinkedList::push_back(const int val)
     {
-        if (isEmpty())
+        if (empty())
         {
             auto pNewNode = new SinglyNode();
             pNewNode->m_element = val;
@@ -148,21 +148,21 @@ namespace swarnendu
         ++m_size;
     }
 
-    void SinglyLinkedList::insertAtPos(const size_t pos, const int val)
+    void SinglyLinkedList::push_at(const size_t pos, const int val)
     {
-        if (isEmpty())
+        if (empty())
         {
             std::cout << std::endl << "The list is empty. Item will be inserted at the fornt" << std::endl;
-            insertAtFront(val);
+            push_front(val);
         }
         else if (pos == 1)
         {
-            insertAtFront(val);
+            push_front(val);
         }
         else if (pos > m_size)
         {
             std::cout << std::endl << "The list is smaller than the pos desired. Item will be inserted at the back" << std::endl;
-            insertAtBack(val);
+            push_back(val);
         }
         else
         {
@@ -185,34 +185,34 @@ namespace swarnendu
         }
     }
 
-    void SinglyLinkedList::insertAtMiddle(const int val)
+    void SinglyLinkedList::push_middle(const int val)
     {
-        if (isEmpty())
+        if (empty())
         {
             std::cout << std::endl << "The list is empty. Item will be inserted at the fornt" << std::endl;
-            insertAtFront(val);
+            push_front(val);
         }
         else if (1 == m_size)
         {
             std::cout << std::endl << "The list has only one element. Item will be inserted at the fornt" << std::endl;
-            insertAtFront(val);
+            push_front(val);
         }
         else
         {
-            insertAtPos(m_size / 2, val);
+            push_at(m_size / 2, val);
         }
     }
 
-    bool SinglyLinkedList::deleteAtFront()
+    bool SinglyLinkedList::pop_front()
     {
-        if (isEmpty())
+        if (empty())
         {
             std::cout << std::endl << "The list is empty. Nothing to delete" << std::endl;
             return false;
         }
         else if (size() == 1)
         {
-            clearList();
+            clear();
             return true;
         }
         else
@@ -228,16 +228,16 @@ namespace swarnendu
         }
     }
 
-    bool SinglyLinkedList::deleteAtBack()
+    bool SinglyLinkedList::pop_back()
     {
-        if (isEmpty())
+        if (empty())
         {
             std::cout << std::endl << "The list is empty. Nothing to delete" << std::endl;
             return false;
         }
         else if (size() == 1)
         {
-            clearList();
+            clear();
             return true;
         }
         else
@@ -261,9 +261,9 @@ namespace swarnendu
         }
     }
 
-    bool SinglyLinkedList::deleteAtPos(const size_t pos)
+    bool SinglyLinkedList::pop_at(const size_t pos)
     {
-        if (isEmpty())
+        if (empty())
         {
             std::cout << std::endl << "The list is empty. Nothing to delete" << std::endl;
             return false;
@@ -275,7 +275,7 @@ namespace swarnendu
         }
         else if ((size() - 1) == pos)
         {
-            deleteAtBack();
+            pop_back();
             return true;
         }
         else
@@ -298,22 +298,22 @@ namespace swarnendu
         }
     }
 
-    bool SinglyLinkedList::deleteAtMiddle()
+    bool SinglyLinkedList::pop_middle()
     {
-        if (isEmpty())
+        if (empty())
         {
             std::cout << std::endl << "The list is empty. Nothing to delete" << std::endl;
             return false;
         }
         else
         {
-            return deleteAtPos(size() / 2);
+            return pop_at(size() / 2);
         }
     }
 
-    void SinglyLinkedList::displayList() noexcept
+    void SinglyLinkedList::display() noexcept
     {
-        if (isEmpty())
+        if (empty())
         {
             std::cout << "The list is empty. Nothing to display" << std::endl;
         }
@@ -334,9 +334,9 @@ namespace swarnendu
         }
     }
 
-    bool SinglyLinkedList::isExists(const int val) noexcept
+    bool SinglyLinkedList::find(const int val) noexcept
     {
-        if (isEmpty())
+        if (empty())
             return false;
 
         auto pHead = m_pHead;
