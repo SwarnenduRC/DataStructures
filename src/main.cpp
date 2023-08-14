@@ -3,7 +3,8 @@
 #include <thread>
 #include <exception>
 
-#include "SinglyLinkedListTest.h"
+#include "LinkedListsTest.h"
+#include "DoublyLinkedListTest.h"
 
 int main (int argc, char** argv)
 {    
@@ -22,7 +23,9 @@ int main (int argc, char** argv)
 
     try
     {
-        testSinglyLinkedList(argc, argv);
+        //testSinglyLinkedList(argc, argv);
+        //testDoublyNode();
+        testDoublyLinkedList();
     }
     catch(const std::exception& e)
     {

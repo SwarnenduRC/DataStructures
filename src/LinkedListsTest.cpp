@@ -3,9 +3,35 @@
 #include <thread>
 
 #include "SinglyLinkedList.h"
-#include "SinglyLinkedListTest.h"
+#include "LinkedListsTest.h"
 
 using swarnendu::SinglyLinkedList;
+using swarnendu_nodes::DoublyNode;
+
+void testDoublyNode()
+{
+    DoublyNode<Student> shamNode(Student("Sham"));
+    shamNode.m_pNext = std::make_shared<DoublyNode<Student>>(Student("Yadu"));
+    shamNode.m_pPrev = std::make_shared<DoublyNode<Student>>(Student("Ram"));
+
+    {
+        std::cout << std::endl << std::endl << "======Move Constructor Test======" << std::endl << std::endl;
+        DoublyNode<Student> madhuNode(Student("Madhu"));
+        madhuNode.m_pNext = std::move(shamNode.m_pNext);
+        madhuNode.m_pPrev = std::move(shamNode.m_pPrev);
+        
+        std::cout << std::endl << std::endl << "Student's name = " << madhuNode.getData().getName() << std::endl << std::endl;
+        std::cout << std::endl << std::endl << "Student's name = " << madhuNode.m_pNext->getData().getName() << std::endl << std::endl;
+        std::cout << std::endl << std::endl << "Student's name = " << madhuNode.m_pPrev->getData().getName() << std::endl << std::endl;
+
+        std::cout << std::endl << std::endl << "======Move Constructor Test======" << std::endl << std::endl;
+    }
+    std::cout << std::endl << std::endl << "Student's name = " << shamNode.getData().getName() << std::endl << std::endl;
+    if (shamNode.m_pNext)
+        std::cout << std::endl << std::endl << "Student's name = " << shamNode.m_pNext->getData().getName() << std::endl << std::endl;
+    if (shamNode.m_pPrev)
+    std::cout << std::endl << std::endl << "Student's name = " << shamNode.m_pPrev->getData().getName() << std::endl << std::endl;
+}
 
 static void initiateList(int argc, char** argv, SinglyLinkedList& list)
 {
