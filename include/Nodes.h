@@ -70,4 +70,4 @@ namespace swarnendu_nodes
         inline T getData() const noexcept { return m_data; }
         inline void setData(const T& val) noexcept { m_data = val; }
     };
-}
+} // namespace swarnendu

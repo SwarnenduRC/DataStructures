@@ -1,3 +1,14 @@
+/**
+ * @file DoublyLinkedListsTest.cpp
+ * @author your name (you@domain.com)
+ * @brief 
+ * @version 0.1
+ * @date 2023-08-21
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #include <iostream>
 #include <string>
 #include <exception>
@@ -74,6 +85,18 @@ static void deleteElementsSelective(DoublyLinkedList<int>& intList)
 }
 
 static void testCopyContructor(DoublyLinkedList<int>& intList)
+{
+    displayList(intList);
+    insertElements(intList);
+    if (intList.find(4))
+        std::cout << std::endl << std::endl << "The value is in the list already" << std::endl << std::endl;
+    else
+        std::cout << std::endl << std::endl << "The value is not in the list yet" << std::endl << std::endl;
+
+    deleteElements(intList);
+}
+
+static void testMoveConstructor(DoublyLinkedList<int>& intList)
 {
     displayList(intList);
     insertElements(intList);

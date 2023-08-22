@@ -42,6 +42,8 @@ namespace swarnendu
                 }
             }
             DoublyLinkedList(DoublyLinkedList&& rhs) noexcept
+                : m_pHead(new DoublyNode<T>())
+                , m_pTail(new DoublyNode<T>())
             {
                 if (!rhs.empty())
                 {
@@ -360,6 +362,18 @@ namespace swarnendu
                     m_size = 0;
                 }
             }
+            inline T getBack() const noexcept
+            {
+                if (!empty())
+                    return m_pTail->getData();
+                return T();
+            }
+            inline T getFront() const noexcept
+            {
+                if (!empty())
+                    return m_pHead->getData();
+                return T();
+            }
         private:
             /**
              * @brief 
@@ -369,4 +383,4 @@ namespace swarnendu
             std::shared_ptr<DoublyNode<T>> m_pHead;
             std::shared_ptr<DoublyNode<T>> m_pTail;
     };
-}
+} // namespace swarnendu

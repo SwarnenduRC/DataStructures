@@ -47,4 +47,4 @@ namespace swarnendu
             SinglyNode* m_pTail = nullptr;
             size_t m_size = 0;
     };
-}
+} // namespace swarnendu
