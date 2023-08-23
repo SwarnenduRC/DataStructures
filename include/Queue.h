@@ -55,6 +55,7 @@ namespace swarnendu
                     clear();
                     m_list = std::move(rhs.m_list);
                     m_size = std::move(rhs.m_size);
+                    rhs.m_size = 0;
                 }
                 return *this;
             }
