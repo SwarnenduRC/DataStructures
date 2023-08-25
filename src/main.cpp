@@ -6,6 +6,7 @@
 #include "LinkedListsTest.h"
 #include "DoublyLinkedListTest.h"
 #include "QueueTest.h"
+#include "StackTest.h"
 
 int main (int argc, char** argv)
 {    
@@ -27,7 +28,8 @@ int main (int argc, char** argv)
         //testSinglyLinkedList(argc, argv);
         //testDoublyNode();
         //testDoublyLinkedList();
-        testQueue();
+        //testQueue();
+        testStack();
     }
     catch(const std::exception& e)
     {
