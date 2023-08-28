@@ -1,0 +1,6 @@
+/**
+ * @brief 
+ * 
+ */
+
+void testDynamicArray();

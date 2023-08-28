@@ -7,6 +7,7 @@
 #include "DoublyLinkedListTest.h"
 #include "QueueTest.h"
 #include "StackTest.h"
+#include "DynamicArrayTest.h"
 
 int main (int argc, char** argv)
 {    
@@ -29,7 +30,8 @@ int main (int argc, char** argv)
         //testDoublyNode();
         //testDoublyLinkedList();
         //testQueue();
-        testStack();
+        //testStack();
+        testDynamicArray();
     }
     catch(const std::exception& e)
     {
