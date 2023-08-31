@@ -33,15 +33,14 @@ void testDoublyNode()
         
         std::cout << std::endl << std::endl << "Student's name = " << madhuNode.getData().getName() << std::endl << std::endl;
         std::cout << std::endl << std::endl << "Student's name = " << madhuNode.m_pNext->getData().getName() << std::endl << std::endl;
-        std::cout << std::endl << std::endl << "Student's name = " << madhuNode.m_pPrev->getData().getName() << std::endl << std::endl;
 
         std::cout << std::endl << std::endl << "======Move Constructor Test======" << std::endl << std::endl;
     }
     std::cout << std::endl << std::endl << "Student's name = " << shamNode.getData().getName() << std::endl << std::endl;
     if (shamNode.m_pNext)
         std::cout << std::endl << std::endl << "Student's name = " << shamNode.m_pNext->getData().getName() << std::endl << std::endl;
-    if (shamNode.m_pPrev)
-    std::cout << std::endl << std::endl << "Student's name = " << shamNode.m_pPrev->getData().getName() << std::endl << std::endl;
+    if (shamNode.m_pPrev.lock())
+        std::cout << std::endl << std::endl << "Student's name = " << shamNode.m_pPrev.lock()->getData().getName() << std::endl << std::endl;
 }
 
 static void initiateList(int argc, char** argv, SinglyLinkedList& list)

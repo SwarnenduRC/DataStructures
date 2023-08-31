@@ -87,13 +87,11 @@ static void deleteElementsSelective(DoublyLinkedList<int>& intList)
 static void testCopyContructor(DoublyLinkedList<int>& intList)
 {
     displayList(intList);
-    insertElements(intList);
+    //insertElements(intList);
     if (intList.find(4))
-        std::cout << std::endl << std::endl << "The value is in the list already" << std::endl << std::endl;
+        std::cout << std::endl << std::endl << "The value " << 4 << " is in the list already" << std::endl << std::endl;
     else
-        std::cout << std::endl << std::endl << "The value is not in the list yet" << std::endl << std::endl;
-
-    deleteElements(intList);
+        std::cout << std::endl << std::endl << "The value " << 4 << " is not in the list yet" << std::endl << std::endl;
 }
 
 static void testMoveConstructor(DoublyLinkedList<int>& intList)
@@ -101,9 +99,9 @@ static void testMoveConstructor(DoublyLinkedList<int>& intList)
     displayList(intList);
     insertElements(intList);
     if (intList.find(4))
-        std::cout << std::endl << std::endl << "The value is in the list already" << std::endl << std::endl;
+        std::cout << std::endl << std::endl << "The value " << 4 << " is in the list already" << std::endl << std::endl;
     else
-        std::cout << std::endl << std::endl << "The value is not in the list yet" << std::endl << std::endl;
+        std::cout << std::endl << std::endl << "The value " << 4 << " is not in the list yet" << std::endl << std::endl;
 
     deleteElements(intList);
 }
@@ -117,9 +115,16 @@ void testDoublyLinkedList()
         
         auto copyList = intList;
         deleteElements(intList);
+
         std::cout << std::endl << std::endl << "==============Copy Constructor Test===================" << std::endl << std::endl;
         testCopyContructor(copyList);
         std::cout << std::endl << std::endl << "==============Copy Constructor Test===================" << std::endl << std::endl;
+
+        std::cout << std::endl << std::endl << "==============Move Constructor Test===================" << std::endl << std::endl;
+        auto movedList = std::move(copyList);
+        displayList(copyList);
+        testMoveConstructor(movedList);
+        std::cout << std::endl << std::endl << "==============Move Constructor Test===================" << std::endl << std::endl;
     }
     catch(const std::exception& e)
     {

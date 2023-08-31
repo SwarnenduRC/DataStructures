@@ -30,8 +30,8 @@ int main (int argc, char** argv)
         //testDoublyNode();
         //testDoublyLinkedList();
         //testQueue();
-        //testStack();
-        testDynamicArray();
+        testStack();
+        //testDynamicArray();
     }
     catch(const std::exception& e)
     {

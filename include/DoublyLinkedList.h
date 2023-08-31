@@ -42,18 +42,10 @@ namespace swarnendu
                 }
             }
             DoublyLinkedList(DoublyLinkedList&& rhs) noexcept
-                : m_pHead(new DoublyNode<T>())
-                , m_pTail(new DoublyNode<T>())
+                : m_size(std::move(rhs.m_size))
+                , m_pHead(std::move(rhs.m_pHead))
+                , m_pTail(std::move(rhs.m_pTail))
             {
-                if (!rhs.empty())
-                {
-                    auto pSrcHead = rhs.m_pHead;
-                    while (pSrcHead)
-                    {
-                        push_back(pSrcHead->getData());
-                        pSrcHead = pSrcHead->m_pNext;
-                    }
-                }
                 rhs.clear();
             }
             DoublyLinkedList& operator=(const DoublyLinkedList& rhs) noexcept
@@ -81,22 +73,16 @@ namespace swarnendu
                 {
                     if (!empty())
                         clear();
-
-                    if (!rhs.empty())
-                    {
-                        auto pSrcHead = rhs.m_pHead;
-                        while (pSrcHead)
-                        {
-                            push_back(pSrcHead->getData());
-                            pSrcHead = pSrcHead->m_pNext;
-                        }
-                    }
+                    
+                    m_size = std::move(rhs.m_size);
+                    m_pHead = std::move(rhs.m_pHead);
+                    m_pTail = std::move(rhs.m_pTail);                    
                     rhs.clear();
                 }
                 return *this;
             }
 
-            inline bool empty() const noexcept { return (m_size ? false : true); }
+            inline bool empty() const noexcept { return (m_size == 0); }
             inline size_t size() const noexcept { return m_size; }
 
             void push_front(const T& val)
@@ -161,7 +147,7 @@ namespace swarnendu
                     }
                     auto pNewNode = std::make_shared<DoublyNode<T>>(val);
                     pNewNode->m_pPrev = pCurrNode->m_pPrev;
-                    pNewNode->m_pPrev->m_pNext = pNewNode;
+                    pNewNode->m_pPrev.lock()->m_pNext = pNewNode;
                     pNewNode->m_pNext = pCurrNode;
                     pCurrNode->m_pPrev = pNewNode;
                     ++m_size;
@@ -198,8 +184,8 @@ namespace swarnendu
                 }
                 else
                 {
-                    m_pTail->m_pPrev->m_pNext = m_pTail->m_pNext;
-                    m_pTail = m_pTail->m_pPrev;
+                    m_pTail->m_pPrev.lock()->m_pNext = m_pTail->m_pNext;
+                    m_pTail = m_pTail->m_pPrev.lock();
                     --m_size;
                 }
             }
@@ -261,7 +247,7 @@ namespace swarnendu
                     while (pTail)
                     {
                         std::cout << pTail->getData();
-                        pTail = pTail->m_pPrev;
+                        pTail = pTail->m_pPrev.lock();
                         if (pTail)
                             std::cout << " --> ";
                         else
@@ -297,7 +283,7 @@ namespace swarnendu
                         return false;
 
                     //The node to be deleted is the first node
-                    if (pDelNode && !pDelNode->m_pPrev)
+                    if (pDelNode && !pDelNode->m_pPrev.lock())
                     {
                         //std::cout << std::endl << std::endl << "Calling pop_front" << std::endl << std::endl;
                         pop_front();
@@ -311,7 +297,7 @@ namespace swarnendu
                     //Any node except first or last node    
                     else
                     {
-                        pDelNode->m_pPrev->m_pNext = pDelNode->m_pNext;
+                        pDelNode->m_pPrev.lock()->m_pNext = pDelNode->m_pNext;
                         pDelNode->m_pNext->m_pPrev = pDelNode->m_pPrev;
                         pDelNode.reset();
                         --m_size;

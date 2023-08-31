@@ -25,20 +25,20 @@ namespace swarnendu_nodes
     {
         T m_data;
         std::shared_ptr<DoublyNode<T>> m_pNext;
-        std::shared_ptr<DoublyNode<T>> m_pPrev;
+        std::weak_ptr<DoublyNode<T>> m_pPrev;
 
-        DoublyNode(const T& val) noexcept : m_data(val), m_pNext(nullptr), m_pPrev(nullptr) {}
+        DoublyNode(const T& val) noexcept : m_data(val), m_pNext(nullptr) {}
         DoublyNode() = default;
-        DoublyNode(const DoublyNode& rhs) noexcept 
+        DoublyNode(const DoublyNode& rhs) noexcept
             : m_data(rhs.m_data)
             , m_pNext(new DoublyNode<T>(*rhs.m_pNext))
-            , m_pPrev(new DoublyNode<T>(*rhs.m_pPrev))
+            , m_pPrev(rhs.m_pPrev)
         {
         }
         DoublyNode(DoublyNode&& rhs) noexcept
             : m_data(std::move(rhs.m_data))
             , m_pNext(new DoublyNode<T>(*rhs.m_pNext))
-            , m_pPrev(new DoublyNode<T>(*rhs.m_pPrev))
+            , m_pPrev(rhs.m_pPrev)
         {
             rhs.m_pNext.reset();
             rhs.m_pPrev.reset();
@@ -49,7 +49,7 @@ namespace swarnendu_nodes
             {
                 m_data = rhs.m_data;
                 m_pNext.reset(new DoublyNode<T>(*rhs.m_pNext));
-                m_pPrev.reset(new DoublyNode<T>(*rhs.m_pPrev));
+                m_pPrev = rhs.m_pPrev;
             }
             return *this;
         }
@@ -59,7 +59,7 @@ namespace swarnendu_nodes
             {
                 m_data = rhs.m_data;
                 m_pNext.reset(new DoublyNode<T>(*rhs.m_pNext));
-                m_pPrev.reset(new DoublyNode<T>(*rhs.m_pPrev));
+                m_pPrev = rhs.m_pPrev;
                 rhs.m_pNext.reset();
                 rhs.m_pPrev.reset();
             }
