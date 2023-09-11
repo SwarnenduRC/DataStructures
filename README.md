@@ -3,10 +3,12 @@
 ## Description
 It is a repo of various simple data structures in modern C++-17 like
 Singly Linked List, Doubly Linked List, Queue, Stack, Dynamic Array etc.
+The ground level structures are built upon using modern C++ smart
+pointers for efficient memory management and auto deletion of allocated memory.
 The data structures Stack and Queue are built upon the Doubly Linked list
 itslef and using all its methods under the top level wrappers. The program
 has been tested for memory leaks using `leaks` on MacOS and none found.
-If you can spot anything then kindly either resolve it or can let me know
+If anyone can spot anything then kindly either resolve it or can let me know
 ## Build
 To build the application simply make which will build two
 binaries under the bin folder for Debug & Release. To clean 
