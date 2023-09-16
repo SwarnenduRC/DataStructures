@@ -30,7 +30,7 @@ namespace swarnendu
             }
             DyArray(DyArray&& rhs) noexcept
                 : m_pDataPtr(std::move(rhs.m_pDataPtr))
-                , m_size(std::move(rhs.m_size))
+                , m_size(std::move_if_noexcept(rhs.m_size))
             {
                 rhs.m_size = 0;
             }
@@ -44,8 +44,8 @@ namespace swarnendu
             {
                 if (this != &rhs)
                 {
-                    m_size = std::move(rhs.m_size);
-                    m_pDataPtr = std::move(rhs.m_pDataPtr);
+                    m_size = std::move_if_noexcept(rhs.m_size);
+                    m_pDataPtr = std::move_if_noexcept(rhs.m_pDataPtr);
                     rhs.m_size = 0;
                 }
                 return *this;

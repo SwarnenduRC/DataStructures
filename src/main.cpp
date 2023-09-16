@@ -28,9 +28,9 @@ int main (int argc, char** argv)
     {
         //testSinglyLinkedList(argc, argv);
         //testDoublyNode();
-        //testDoublyLinkedList();
+        testDoublyLinkedList();
         //testQueue();
-        testStack();
+        //testStack();
         //testDynamicArray();
     }
     catch(const std::exception& e)

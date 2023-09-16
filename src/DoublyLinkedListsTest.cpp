@@ -88,8 +88,9 @@ static void testCopyContructor(DoublyLinkedList<int>& intList)
 {
     displayList(intList);
     //insertElements(intList);
-    if (intList.find(4))
-        std::cout << std::endl << std::endl << "The value " << 4 << " is in the list already" << std::endl << std::endl;
+    const auto [bFound, node] = intList.find(4);
+    if (bFound)
+        std::cout << std::endl << std::endl << "The value " << node->getData() << " is in the list already" << std::endl << std::endl;
     else
         std::cout << std::endl << std::endl << "The value " << 4 << " is not in the list yet" << std::endl << std::endl;
 }
@@ -97,11 +98,12 @@ static void testCopyContructor(DoublyLinkedList<int>& intList)
 static void testMoveConstructor(DoublyLinkedList<int>& intList)
 {
     displayList(intList);
-    insertElements(intList);
-    if (intList.find(4))
-        std::cout << std::endl << std::endl << "The value " << 4 << " is in the list already" << std::endl << std::endl;
+    //insertElements(intList);
+    const auto [bFound, node] = intList.find(7);
+    if (bFound)
+        std::cout << std::endl << std::endl << "The value " << node->getData() << " is in the list already" << std::endl << std::endl;
     else
-        std::cout << std::endl << std::endl << "The value " << 4 << " is not in the list yet" << std::endl << std::endl;
+        std::cout << std::endl << std::endl << "The value " << 7 << " is not in the list yet" << std::endl << std::endl;
 
     deleteElements(intList);
 }

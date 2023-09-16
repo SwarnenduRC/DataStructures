@@ -33,8 +33,8 @@ namespace swarnendu
             {
             }
             Stack(Stack&& rhs) noexcept
-                : m_list(std::move(rhs.m_list))
-                , m_size(std::move(rhs.m_size))
+                : m_list(std::move_if_noexcept(rhs.m_list))
+                , m_size(std::move_if_noexcept(rhs.m_size))
             {
                 rhs.m_size = 0;
             }
@@ -53,8 +53,8 @@ namespace swarnendu
                 if (&rhs != this)
                 {
                     clear();
-                    m_list = std::move(rhs.m_list);
-                    m_size = std::move(rhs.m_size);
+                    m_list = std::move_if_noexcept(rhs.m_list);
+                    m_size = std::move_if_noexcept(rhs.m_size);
                     rhs.m_size = 0;
                 }
                 return *this;

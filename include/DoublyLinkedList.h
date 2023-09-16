@@ -42,9 +42,9 @@ namespace swarnendu
                 }
             }
             DoublyLinkedList(DoublyLinkedList&& rhs) noexcept
-                : m_size(std::move(rhs.m_size))
-                , m_pHead(std::move(rhs.m_pHead))
-                , m_pTail(std::move(rhs.m_pTail))
+                : m_size(std::move_if_noexcept(rhs.m_size))
+                , m_pHead(std::move_if_noexcept(rhs.m_pHead))
+                , m_pTail(std::move_if_noexcept(rhs.m_pTail))
             {
                 rhs.clear();
             }
@@ -74,9 +74,9 @@ namespace swarnendu
                     if (!empty())
                         clear();
                     
-                    m_size = std::move(rhs.m_size);
-                    m_pHead = std::move(rhs.m_pHead);
-                    m_pTail = std::move(rhs.m_pTail);                    
+                    m_size = std::move_if_noexcept(rhs.m_size);
+                    m_pHead = std::move_if_noexcept(rhs.m_pHead);
+                    m_pTail = std::move_if_noexcept(rhs.m_pTail);                    
                     rhs.clear();
                 }
                 return *this;
@@ -85,6 +85,15 @@ namespace swarnendu
             inline bool empty() const noexcept { return (m_size == 0); }
             inline size_t size() const noexcept { return m_size; }
 
+            /**
+             * @brief Pushes an element at the front to the list
+             *        If the list is empty then it just creates
+             *        two shared pointers for head and tail pointing
+             *        to the same value to be inserted. otherwise
+             *        it readjusts the nodes accordingly
+             * 
+             * @param val Value to be inserted in the list
+             */
             void push_front(const T& val)
             {
                 if (!empty())
@@ -106,6 +115,16 @@ namespace swarnendu
                 }
                 ++m_size;
             }
+
+            /**
+             * @brief Pushes an element at the back to the list
+             *        If the list is empty then it just creates
+             *        two shared pointers for head and tail pointing
+             *        to the same value to be inserted. otherwise
+             *        it readjusts the nodes accordingly
+             * 
+             * @param val Value to be inserted in the list
+             */
             void push_back(const T& val)
             {
                 if (!empty())
@@ -219,8 +238,6 @@ namespace swarnendu
                 if (!empty())
                 {
                     auto pHead = m_pHead;
-                    /* if (pHead)
-                        std::cout << std::endl << std::endl << "pHead->getData() = " << pHead->getData() << std::endl << std::endl; */
                     std::cout << std::endl;
                     while (pHead)
                     {
@@ -268,60 +285,52 @@ namespace swarnendu
                 }
                 else
                 {
-                    auto pDelNode = m_pHead;
-                    auto elemFound = false;
-                    while (pDelNode)
-                    {
-                        if (pDelNode->getData() == val)
-                        {
-                            elemFound = true;
-                            break;
-                        }
-                        pDelNode = pDelNode->m_pNext;
-                    }
+                    auto [elemFound, pNode] = find(val);
                     if (!elemFound)
                         return false;
 
                     //The node to be deleted is the first node
-                    if (pDelNode && !pDelNode->m_pPrev.lock())
+                    if (pNode && !pNode->m_pPrev.lock())
                     {
-                        //std::cout << std::endl << std::endl << "Calling pop_front" << std::endl << std::endl;
                         pop_front();
                     }
                     //The node to be deleted is the last node
-                    else if (pDelNode && !pDelNode->m_pNext)
+                    else if (pNode && !pNode->m_pNext)
                     {
-                        //std::cout << std::endl << std::endl << "Calling pop_back" << std::endl << std::endl;
                         pop_back();
                     }
                     //Any node except first or last node    
                     else
                     {
-                        pDelNode->m_pPrev.lock()->m_pNext = pDelNode->m_pNext;
-                        pDelNode->m_pNext->m_pPrev = pDelNode->m_pPrev;
-                        pDelNode.reset();
+                        pNode->m_pPrev.lock()->m_pNext = pNode->m_pNext;
+                        pNode->m_pNext->m_pPrev = pNode->m_pPrev;
+                        pNode.reset();
                         --m_size;
                     }
                     return true;
                 }
             }
 
-            bool find(const T& val)
+            std::tuple<bool, std::shared_ptr<DoublyNode<T>>> find(const T& val)
             {
                 if (empty())
-                    return false;
+                    return std::make_tuple(false, nullptr);
 
                 auto pHead = m_pHead;
-                while (pHead)
+                auto pTail = m_pTail;
+                while (pHead && pTail)
                 {
                     if (val == pHead->getData())
-                        return true;
+                        return std::make_tuple(true, pHead);
+                    if (val == pTail->getData())
+                        return std::make_tuple(true, pTail);
 
                     pHead = pHead->m_pNext;
+                    pTail = pTail->m_pPrev.lock();
                 }
-                return false;
+                return std::make_tuple(false, nullptr);
             }
-            
+
             /**
              * @brief 
              * 
