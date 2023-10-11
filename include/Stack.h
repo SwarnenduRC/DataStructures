@@ -9,9 +9,9 @@
  * 
  */
 
-#include <iostream>
 #include <algorithm>
 #include <memory>
+#include <exception>
 
 #include "DoublyLinkedList.h"
 
@@ -23,10 +23,17 @@ namespace swarnendu
     class Stack
     {
         public:
-            Stack() noexcept
-                : m_list(new DoublyLinkedList<T>())
-                , m_size(m_list->size())
-            {}
+            Stack() = default;
+            Stack(const std::initializer_list<T>& iList) noexcept
+                : m_list(nullptr)
+                , m_size(0)
+            {
+                if (iList.size())
+                {
+                    for (const auto val : iList)
+                        push(val);
+                }
+            }
             Stack(const Stack& rhs) noexcept
                 : m_list(std::make_unique<DoublyLinkedList<T>>(*rhs.m_list))
                 , m_size(rhs.m_size)
@@ -48,7 +55,7 @@ namespace swarnendu
                 }
                 return *this;
             }
-            Stack& operator=(Stack&& rhs) noexcept
+            Stack& operator=(Stack&& rhs) noexcept                
             {
                 if (&rhs != this)
                 {
@@ -66,26 +73,30 @@ namespace swarnendu
             }
             void push(const T& val)
             {
+                if (!m_list)
+                    m_list = std::make_unique<DoublyLinkedList<T>>();
+
                 m_list->push_back(val);
                 m_size = m_list->size();
             }
-            inline T top() const noexcept
+            T& top() const
             {
-                if (!empty())
-                    return m_list->getFront();
-                return T();
+                if (empty())
+                    throw std::out_of_range("The stack is empty");
+                
+                return m_list->getHead()->m_data;
             }
             void pop()
             {
-                if (!empty())
-                {
-                    m_list->pop_front();
-                    m_size = m_list->size();
-                }
+                if (empty())
+                    throw std::out_of_range("The stack is empty");
+
+                m_list->pop_front();
+                m_size = m_list->size();
             }
             inline bool empty() const noexcept { return (m_size ? false : true); }
             inline size_t size() const noexcept { return m_size; }
-            inline bool find(const T& val) const noexcept { return m_list->find(val); }
+            inline bool find(const T& val) const noexcept { return std::get<0>(m_list->find(val)); }
             void clear()
             {
                 if (!empty())
@@ -95,16 +106,18 @@ namespace swarnendu
                     m_size = 0;
                 }
             }
-            void display() const noexcept
+            void swap(Stack& rhs)
             {
-                if (!empty())
-                    m_list->display();
-                else
-                    std::cout << std::endl << std::endl << "It is an empty stack" << std::endl << std::endl;
+                if (this != &rhs)
+                {
+                    auto temp = std::move(*this);
+                    *this = std::move(rhs);
+                    rhs = std::move(temp);
+                }
             }
         
         private:
-            std::unique_ptr<DoublyLinkedList<T>> m_list;
-            size_t m_size;
+            std::unique_ptr<DoublyLinkedList<T>> m_list = nullptr;
+            size_t m_size = 0;
     };
 } // namespace swarnendu

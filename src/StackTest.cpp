@@ -3,58 +3,132 @@
  * @author your name (you@domain.com)
  * @brief 
  * @version 0.1
- * @date 2023-08-25
+ * @date 2023-10-10
  * 
  * @copyright Copyright (c) 2023
  * 
  */
-#include "TestData.h"
 #include "StackTest.h"
-#include "Stack.h"
 
-using swarnendu::Stack;
-
-static void testCopyOperator(Stack<Employee>& s)
+TEST_F(StackTest, testDefaultConstructor)
 {
-    s.push(Employee("Swarnendu"));
-    std::cout << std::endl << "Displaying first object of the copy stack: "<< s.top() << std::endl << std::endl;
-    std::cout << "Displaying copy stack below" << std::endl;
-    s.display();
-}
-static void testMoveOperator(Stack<Employee>& s)
-{
-    s.push(Employee("Deepa"));
-    std::cout << std::endl << std::endl << s.top() << std::endl << std::endl;
-    while (!s.empty())
-    {
-        s.display();
-        s.pop();
-    }
-    s.display();
+    ASSERT_TRUE(m_stack.empty());
+    size_t stackExpectedSize = 0;
+    ASSERT_EQ(stackExpectedSize, m_stack.size());
 }
 
-void testStack()
+TEST_F(StackTest, testInitializerListConstructor)
 {
-    Stack<Employee> stack;
-    stack.push(Employee("Dhruv"));
-    stack.push(Employee("Aravind"));
-    stack.push(Employee("Rajiv"));
+    Stack<int> stack = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    std::stack<int> refStack;
+    for (auto val = 10; val >= 1; --val)
+        refStack.push(val);
 
-    std::cout << std::endl << "Frist element in the stack: " << stack.top() << std::endl << std::endl;
-    std::cout << "Displaying original stack below" << std::endl;
-    stack.display();
+    testElementsInStack(refStack, stack);
+}
 
-    Stack<Employee> stackCopy;
-    stackCopy = stack;
+TEST_F(StackTest,testCopyConstructor)
+{
+    Stack<int> stack = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    std::stack<int> refStack;
+    for (auto val = 10; val >= 1; --val)
+        refStack.push(val);
+
+    auto stackCopy = stack;
+    testElementsInStack(refStack, stack);
+    for (auto val = 10; val >= 1; --val)
+        refStack.push(val);
+
+    testElementsInStack(refStack, stackCopy);
+}
+
+TEST_F(StackTest,testAssignment)
+{
+    Stack<int> stack = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    std::stack<int> refStack;
+    for (auto val = 10; val >= 1; --val)
+        refStack.push(val);
+
+    m_stack = stack;
+    testElementsInStack(refStack, stack);
+    for (auto val = 10; val >= 1; --val)
+        refStack.push(val);
+
+    testElementsInStack(refStack, m_stack);
+}
+
+TEST_F(StackTest,testMove)
+{
+    Stack<int> stack = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+    auto stackMove = std::move(stack);
+    ASSERT_TRUE(stack.empty());
+    size_t stackExpectedSize = 0;
+    ASSERT_EQ(stackExpectedSize, stack.size());
+
+    std::stack<int> refStack;
+    for (auto val = 10; val >= 1; --val)
+        refStack.push(val);
+
+    testElementsInStack(refStack, stackMove);
+}
+
+TEST_F(StackTest,testMoveAssignment)
+{
+    Stack<int> stack = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    
+    m_stack = std::move(stack);
+    ASSERT_TRUE(stack.empty());
+    size_t stackExpectedSize = 0;
+    ASSERT_EQ(stackExpectedSize, stack.size());
+
+    std::stack<int> refStack;
+    for (auto val = 10; val >= 1; --val)
+        refStack.push(val);
+
+    testElementsInStack(refStack, m_stack);
+}
+
+TEST_F(StackTest, testSwap)
+{
+    Stack<int> stack1 = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    std::stack<int> refStack1;
+    for (auto val = 10; val >= 1; --val)
+        refStack1.push(val);
+
+    Stack<int> stack2 = {11, 12, 13, 14, 15};
+    std::stack<int> refStack2;
+    for (auto val = 15; val >= 11; --val)
+        refStack2.push(val);
+
+    stack2.swap(stack1);
+    testElementsInStack(refStack1, stack2);
+    testElementsInStack(refStack2, stack1);
+}
+
+TEST_F(StackTest, testFind)
+{
+    Stack<int> stack = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    EXPECT_TRUE(stack.find(1));
     stack.pop();
-    std::cout << std::endl << "Displaying original stack after popping the first element" << std::endl;
-    stack.display();
-    testCopyOperator(stackCopy);
-    std::cout << std::endl << "Displaying original stack below before moving it" << std::endl;
-    stack.display();
-    Stack<Employee> stackMove;
-    stackMove = std::move(stack);
-    std::cout << "\nDisplaying original stack below after moving it" << std::endl;
-    stack.display();
-    testMoveOperator(stackMove);
+    EXPECT_FALSE(stack.find(1));
 }
+
+TEST_F(StackTest, testClear)
+{
+    Stack<int> stack = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    ASSERT_FALSE(stack.empty());
+    size_t stackExpectedSize = 10;
+    ASSERT_EQ(stackExpectedSize, stack.size());
+    stack.clear();
+    ASSERT_TRUE(stack.empty());
+    stackExpectedSize = 0;
+    ASSERT_EQ(stackExpectedSize, stack.size());
+}
+
+/**
+ * The push, pop and top functions are already
+ * been tested in initializer list constructor
+ * test and in testElementsInStack function so
+ * not testing them explicitly anymore here.
+ */

@@ -9,23 +9,38 @@
  * 
  */
 
-#include <iostream>
+#ifndef DOUBLY_LINKED_LIST_H
+#define DOUBLY_LINKED_LIST_H
 
 #include "Nodes.h"
 
+#include <optional>
+#include <initializer_list>
 namespace swarnendu
 {
     using swarnendu_nodes::DoublyNode;
 
-    template<typename T>
+    template<typename T = int>
     class DoublyLinkedList
     {
         public:
             DoublyLinkedList() = default;
             ~DoublyLinkedList() = default;
+            DoublyLinkedList(const std::initializer_list<T>& iList) noexcept
+                : m_size(0)
+                , m_pHead(nullptr)
+                , m_pTail(nullptr)
+            {
+                if (iList.size() != 0)
+                {
+                    for (const auto& element : iList)
+                        push_back(element);
+                }
+            }
             DoublyLinkedList(const DoublyLinkedList& rhs) noexcept
-                : m_pHead(new DoublyNode<T>())
-                , m_pTail(new DoublyNode<T>())
+                : m_size(0)
+                , m_pHead(nullptr)
+                , m_pTail(nullptr)
             {
                 if (!rhs.empty())
                 {
@@ -146,6 +161,14 @@ namespace swarnendu
                 }
                 ++m_size;
             }
+            /**
+             * @brief Pushes an element at the specified position
+             * 
+             * @param val The element to be pushed
+             * @param pos The position at which the element will be pushed.
+             *            Please note the first postion in the list is
+             *            considered as 0 (zero)
+             */
             void push_at(const T& val, const size_t pos)
             {
                 if (empty() || pos == 1)
@@ -172,51 +195,88 @@ namespace swarnendu
                     ++m_size;
                 }
             }
-            void pop_front()
+            /**
+             * @brief Pops the first element from the list
+             * 
+             * @return std::optional<T> The element if pops successful otherwise std::nullopt
+             */
+            std::optional<T> pop_front()
             {
+                std::optional<T> retVal;
                 if (empty())
                 {
-                    std::cout << std::endl << std::endl << "The list is empty. Nothing to delete" << std::endl << std::endl;
-                    return;
+                    if (std::is_integral<T>::value) //Only for testing purpose
+                        return 0;
+                    else
+                        return std::nullopt;
                 }
                 if (size() == 1)
                 {
+                    retVal = std::move(m_pHead->getData());
                     clear();
+                    return std::move(retVal);
                 }
                 else
                 {
+                    retVal = std::move(m_pHead->getData());
                     m_pHead->m_pNext->m_pPrev = m_pHead->m_pPrev;
                     m_pHead = m_pHead->m_pNext;
                     --m_size;
+                    return std::move(retVal);
                 }
             }
-            void pop_back()
+            /**
+             * @brief Pops the last element from the list
+             * 
+             * @return std::optional<T> The element if pops successful otherwise std::nullopt
+             */
+            std::optional<T> pop_back()
             {
                 if (empty())
                 {
-                    std::cout << std::endl << std::endl << "The list is empty. Nothing to delete" << std::endl << std::endl;
-                    return;
+                    if (std::is_integral<T>::value) //Only for testing purpose
+                        return 0;
+                    else
+                        return std::nullopt;
                 }
                 if (size() == 1)
                 {
+                    auto retVal = std::move(m_pTail->getData());
                     clear();
+                    return std::move(retVal);
                 }
                 else
                 {
+                    auto retVal = std::move(m_pTail->getData());
                     m_pTail->m_pPrev.lock()->m_pNext = m_pTail->m_pNext;
                     m_pTail = m_pTail->m_pPrev.lock();
                     --m_size;
+                    return std::move(retVal);
                 }
             }
-            void pop_at(const size_t pos)
+            /**
+             * @brief Pops an element from the specified position
+             * 
+             * @param pos The position at which the element will be poped.
+             *            Please note the first postion in the list is
+             *            considered as 0 (zero)
+             * @return std::optional<T> The element if pops successful otherwise std::nullopt
+             */
+            std::optional<T> pop_at(const size_t pos)
             {
                 if (empty())
                 {
-                    std::cout << std::endl << std::endl << "The list is empty. Nothing to delete" << std::endl << std::endl;
+                    if (std::is_integral<T>::value) //Only for testing purpose
+                        return 0;
+                    else
+                        return std::nullopt;
                 }
                 else if (pos > size())
                 {
-                    std::cout << std::endl << std::endl << "The list is long enough. List size = " << size() << ", pos = " << pos << std::endl << std::endl;
+                    if (std::is_integral<T>::value) //Only for testing purpose
+                        return 0;
+                    else
+                        return std::nullopt;
                 }
                 else
                 {
@@ -226,98 +286,72 @@ namespace swarnendu
                         if (pCurrNode)
                             pCurrNode = pCurrNode->m_pNext;
                     }
+                    auto retVal = std::move(pCurrNode->getData());
                     auto pNextNode = pCurrNode->m_pNext;
-                    pCurrNode->m_pPrev->m_pNext = pNextNode;
+                    pCurrNode->m_pPrev.lock()->m_pNext = pNextNode;
                     pNextNode->m_pPrev = pCurrNode->m_pPrev;
                     pCurrNode.reset();
                     --m_size;
+                    return std::move(retVal);
                 }
             }
-            void display() const noexcept
-            {
-                if (!empty())
-                {
-                    auto pHead = m_pHead;
-                    std::cout << std::endl;
-                    while (pHead)
-                    {
-                        std::cout << pHead->getData();
-                        pHead = pHead->m_pNext;
-                        if (pHead)
-                            std::cout << " --> ";
-                        else
-                            std::cout << " --> NULL";
-                    }
-                    std::cout << std::endl;
-                }
-                else
-                {
-                    std::cout << std::endl << std::endl << "The list is empty" << std::endl << std::endl;
-                }
-            }
-            void displayBack() const noexcept
-            {
-                if (!empty())
-                {
-                    auto pTail = m_pTail;
-                    std::cout << std::endl;
-                    while (pTail)
-                    {
-                        std::cout << pTail->getData();
-                        pTail = pTail->m_pPrev.lock();
-                        if (pTail)
-                            std::cout << " --> ";
-                        else
-                            std::cout << " --> NULL";
-                    }
-                    std::cout << std::endl;
-                }
-                else
-                {
-                    std::cout << std::endl << std::endl << "The list is empty" << std::endl << std::endl;
-                }
-            }
-            bool erase(const T& val)
+            /**
+             * @brief Erases an element from the list
+             * 
+             * @param val The element to be erased
+             * @return std::optional<T> The element if the erase is successful otherwise std nullopt
+             */
+            std::optional<T> erase(const T& val)
             {
                 if (empty())
                 {
-                    return false;
+                    if (std::is_integral<T>::value) //Only for testing purpose
+                        return 0;
+                    else
+                        return std::nullopt;
                 }
                 else
                 {
                     auto [elemFound, pNode] = find(val);
                     if (!elemFound)
-                        return false;
+                        return std::nullopt;
 
                     //The node to be deleted is the first node
                     if (pNode && !pNode->m_pPrev.lock())
                     {
-                        pop_front();
+                        return pop_front();
                     }
                     //The node to be deleted is the last node
                     else if (pNode && !pNode->m_pNext)
                     {
-                        pop_back();
+                        return pop_back();
                     }
                     //Any node except first or last node    
                     else
                     {
+                        auto retVal = std::move(pNode->getData());
                         pNode->m_pPrev.lock()->m_pNext = pNode->m_pNext;
                         pNode->m_pNext->m_pPrev = pNode->m_pPrev;
-                        pNode.reset();
+                        //pNode->reset();
                         --m_size;
+                        return std::move(retVal);
                     }
-                    return true;
                 }
             }
-
-            std::tuple<bool, std::shared_ptr<DoublyNode<T>>> find(const T& val)
+            /**
+             * @brief Finds an element in the list
+             * 
+             * @param val The element to be found
+             * @return std::tuple<bool, DoublyNode<T>*> Returns true and node to the element if successful
+             *                                          otherwise false and nullptr
+             */
+            std::tuple<bool, DoublyNode<T>*> find(const T& val)
             {
                 if (empty())
                     return std::make_tuple(false, nullptr);
 
-                auto pHead = m_pHead;
-                auto pTail = m_pTail;
+                auto pHead = m_pHead.get();
+                auto pTail = m_pTail.get();
                 while (pHead && pTail)
                 {
                     if (val == pHead->getData())
@@ -325,16 +359,14 @@ namespace swarnendu
                     if (val == pTail->getData())
                         return std::make_tuple(true, pTail);
 
-                    pHead = pHead->m_pNext;
-                    pTail = pTail->m_pPrev.lock();
+                    pHead = pHead->m_pNext.get();
+                    pTail = pTail->m_pPrev.lock().get();
                 }
                 return std::make_tuple(false, nullptr);
             }
-
             /**
-             * @brief 
+             * @brief Clears the entire list
              * 
-             * @param list 
              */
             void clear()
             {
@@ -357,17 +389,29 @@ namespace swarnendu
                     m_size = 0;
                 }
             }
-            inline T getBack() const noexcept
+            /**
+             * @brief Gets the Tail of the list
+             * 
+             * @return DoublyNode<T>* The last node of the list if not empty otherwise NULL
+             */
+            inline DoublyNode<T>* getTail() const noexcept
             {
                 if (!empty())
-                    return m_pTail->getData();
-                return T();
+                    return m_pTail.get();
+
+                return nullptr;
             }
-            inline T getFront() const noexcept
+            /**
+             * @brief Get the Head of the list
+             * 
+             * @return DoublyNode<T>* The first node of the list if not empty otherwise NULL
+             */
+            inline DoublyNode<T>* getHead() const noexcept
             {
                 if (!empty())
-                    return m_pHead->getData();
-                return T();
+                    return m_pHead.get();
+                
+                return nullptr;
             }
         private:
             /**
@@ -375,7 +419,9 @@ namespace swarnendu
              * 
              */
             size_t m_size = 0;
-            std::shared_ptr<DoublyNode<T>> m_pHead;
-            std::shared_ptr<DoublyNode<T>> m_pTail;
+            std::shared_ptr<DoublyNode<T>> m_pHead = nullptr;
+            std::shared_ptr<DoublyNode<T>> m_pTail = nullptr;
     };
 } // namespace swarnendu
+
+#endif

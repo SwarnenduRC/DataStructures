@@ -9,9 +9,10 @@
  * 
  */
 
-#include <iostream>
+#include <exception>
 #include <algorithm>
 #include <memory>
+#include <initializer_list>
 
 #include "DoublyLinkedList.h"
 
@@ -23,10 +24,17 @@ namespace swarnendu
     class Queue
     {
         public:
-            Queue() noexcept
-                : m_list(new DoublyLinkedList<T>())
-                , m_size(m_list->size())
-            {}
+            Queue() = default;
+            Queue(const std::initializer_list<T>& iList) noexcept
+                : m_list(nullptr)
+                , m_size(0)
+            {
+                if (iList.size())
+                {
+                    for (const auto element : iList)
+                        push(element);
+                }
+            }
             Queue(const Queue& rhs) noexcept
                 : m_list(std::make_unique<DoublyLinkedList<T>>(*rhs.m_list))
                 , m_size(rhs.m_size)
@@ -43,7 +51,7 @@ namespace swarnendu
                 if (&rhs != this)
                 {
                     clear();
-                    m_list.reset(new DoublyLinkedList<T>(*rhs.m_list));
+                    m_list = std::make_unique<DoublyLinkedList<T>>(*rhs.m_list);
                     m_size = rhs.m_size;
                 }
                 return *this;
@@ -66,16 +74,27 @@ namespace swarnendu
             }
             void push(const T& val)
             {
+                if (!m_list)
+                    m_list = std::make_unique<DoublyLinkedList<T>>();
+
                 m_list->push_front(val);
                 m_size = m_list->size();
             }
-            inline T top() const noexcept
+            inline T& front() const
             {
-                if (!empty())
-                    return m_list->getBack();
-                return T();
+                if (empty())
+                    throw std::out_of_range("The queue is empty");
+                
+                return m_list->getTail()->m_data;
             }
-            void pop()
+            inline T& back() const
+            {
+                if (empty())
+                    throw std::out_of_range("The queue is empty");
+                    
+                return m_list->getHead()->m_data;
+            }
+            void pop() noexcept
             {
                 if (!empty())
                 {
@@ -83,9 +102,18 @@ namespace swarnendu
                     m_size = m_list->size();
                 }
             }
+            void swap(Queue<T>& rhs)
+            {
+                if (this != &rhs)
+                {
+                    auto temp = std::move(*this);
+                    *this = std::move(rhs);
+                    rhs = std::move(temp);
+                }
+            }
             inline bool empty() const noexcept { return (m_size ? false : true); }
             inline size_t size() const noexcept { return m_size; }
-            inline bool find(const T& val) const noexcept { return m_list->find(val); }
+            inline bool find(const T& val) const noexcept { return std::get<0>(m_list->find(val)); }
             void clear()
             {
                 if (!empty())
@@ -95,16 +123,9 @@ namespace swarnendu
                     m_size = 0;
                 }
             }
-            void display() const noexcept
-            {
-                if (!empty())
-                    m_list->display();
-                else
-                    std::cout << std::endl << std::endl << "It is an empty queue" << std::endl << std::endl;
-            }
         
         private:
-            std::unique_ptr<DoublyLinkedList<T>> m_list;
-            size_t m_size;
+            std::unique_ptr<DoublyLinkedList<T>> m_list = nullptr;
+            size_t m_size = 0;
     };
 } // namespace swarnendu

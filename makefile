@@ -5,7 +5,7 @@ OBJ_DIR := obj
 BIN_DIR := bin
 
 ##Compiler flags
-CXX := g++
+CXX := clang++
 
 CXXFLAGS := -std=c++20 -g -Wall -Wextra -Werror -Wno-unused-function -I$(INC_DIR) $(addprefix -I, $(wildcard $(INC_DIR)/*))
 
@@ -15,8 +15,8 @@ OBJS := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
 DBG_OBJS := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%_d.o, $(SRCS))
 
 ##Binaries
-TARGET := $(BIN_DIR)/DataStructure
-DBG_TARGET := $(BIN_DIR)/DataStructureD
+TARGET := $(BIN_DIR)/DataStructureTest
+DBG_TARGET := $(BIN_DIR)/DataStructureTestD
 
 all : debug release
 
@@ -26,12 +26,12 @@ debug : $(DBG_TARGET)
 
 $(TARGET) : $(OBJS) | $(BIN_DIR)
 	@echo "Linking release build...."
-	$(CXX) $(CXXFLAGS) -o $@ $^
+	$(CXX) $(CXXFLAGS) -lgtest -lgmock -lpthread -o $@ $^
 	@echo "Linking release build completed"
 
 $(DBG_TARGET) : $(DBG_OBJS) | $(BIN_DIR)
 	@echo "Linking debug build...."
-	$(CXX) $(CXXFLAGS) -o $@ $^
+	$(CXX) $(CXXFLAGS) -lgtest -lgmock -lpthread -o $@ $^
 	@echo "Linking debug build completed"
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)

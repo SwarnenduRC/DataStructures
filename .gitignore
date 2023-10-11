@@ -7,3 +7,4 @@ obj/
 
 ## Ignore build specific files
 *.dSYM
+.DS_Store

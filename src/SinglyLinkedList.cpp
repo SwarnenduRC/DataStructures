@@ -9,47 +9,66 @@
  * 
  */
 
-#include <iostream>
-#include <algorithm>
-#include <memory>
-
 #include "SinglyLinkedList.h"
 
-
+#include <algorithm>
+#include <memory>
+#include <functional>
 namespace swarnendu
 {
-    SinglyLinkedList::~SinglyLinkedList()
+    SinglyLinkedList::SinglyLinkedList(const std::initializer_list<int>& list)
+        : m_pHead(nullptr)
+        , m_pTail(nullptr)
+        , m_size(0)
     {
-        if (!empty())
-            clear();
+        if (list.size() != 0)
+        {
+            for (const auto element : list)
+                push_back(element);
+        }
+    }
+    SinglyLinkedList::~SinglyLinkedList()
+    {        
+        /**
+         * @brief At the very begining of the insertion
+         * i.e.; either in push_back or push_front, we only 
+         * allocate memory for m_pHead and rest all
+         * passing and realigning pointers. So deleting
+         * only the head node would clear up the memory
+         * entirely by calling the destructor of SinglyNode
+         * in a recursive fashion.
+         */
+        if (m_pHead)
+            delete m_pHead;
 
         m_pHead = nullptr;
         m_pTail = nullptr;
+        m_size = 0;
     }
 
     void SinglyLinkedList::clear()
     {
         if (!empty())
         {
-            SinglyNode* pCurrent = nullptr;
-            while (m_pHead)
-            {
-                pCurrent = m_pHead;
-                m_pHead = m_pHead->m_pNext;
-                if (pCurrent)
-                {
-                    delete pCurrent;
-                    --m_size;
-                }
-                pCurrent = nullptr;
-            }
+            /**
+             * Deleting only the head pointer will
+             * recursively the entire list as the 
+             * destructor of SinglyNode will get called
+             */
+            if (m_pHead)
+                delete m_pHead;
+
             m_size = 0;
+            m_pHead = nullptr;
+            m_pTail = nullptr;
         }
     }
 
     SinglyLinkedList::SinglyLinkedList(const SinglyLinkedList& rhs) noexcept
+        : m_pHead(new SinglyNode(*rhs.m_pHead))
+        , m_pTail(rhs.m_pTail)
+        , m_size(rhs.m_size)
     {
-        copyList(rhs);
     }
 
     SinglyLinkedList& SinglyLinkedList::operator=(const SinglyLinkedList& rhs) noexcept
@@ -58,17 +77,24 @@ namespace swarnendu
         {
             if (m_pHead || m_pTail)
                 clear();
-
-            copyList(rhs);
+            copy(rhs);
         }
         return *this;
     }
 
-    SinglyLinkedList::SinglyLinkedList(SinglyLinkedList&& rhs) noexcept : 
-        m_pHead(rhs.m_pHead), m_pTail(rhs.m_pTail), m_size(rhs.m_size) 
+    SinglyLinkedList::SinglyLinkedList(SinglyLinkedList&& rhs) noexcept 
+        : m_pHead(std::move_if_noexcept(rhs.m_pHead))
+        , m_pTail(nullptr)
+        , m_size(std::move_if_noexcept(rhs.m_size))
     {
-        rhs.m_pHead = rhs.m_pTail = nullptr;
         rhs.m_size = 0;
+        rhs.m_pHead = nullptr;
+        rhs.m_pTail = nullptr;
+        
+        auto pHead = m_pHead;        
+        while(pHead->m_pNext)
+            pHead = pHead->m_pNext;
+        m_pTail = pHead;
     }
 
     SinglyLinkedList& SinglyLinkedList::operator=(SinglyLinkedList&& rhs) noexcept
@@ -78,35 +104,35 @@ namespace swarnendu
             if (m_pHead || m_pTail)
                 clear();
 
-            std::swap(m_pHead, rhs.m_pHead);
-            std::swap(m_pTail, rhs.m_pTail);
-            std::swap(m_size, rhs.m_size);
+            m_pHead = std::move_if_noexcept(rhs.m_pHead);            
+            
+            auto pHead = m_pHead;
+            while(pHead->m_pNext)
+                pHead = pHead->m_pNext;
+            m_pTail = pHead;
+
+            m_size = std::move_if_noexcept(rhs.m_size);
+            rhs.m_size = 0;
+            rhs.m_pHead = nullptr;
+            rhs.m_pTail = nullptr;
         }
         return *this;
     }
 
-    void SinglyLinkedList::copyList(const SinglyLinkedList& rhs) noexcept
+    void SinglyLinkedList::copy(const SinglyLinkedList& rhs)
     {
-        if (rhs.m_pHead && rhs.m_pTail)
+        if (this != &rhs)
         {
-            auto pRHSCurr = rhs.m_pHead;
-            m_pHead = new SinglyNode();
-            m_pHead->m_element = rhs.m_pHead->m_element;
-            auto pHead = m_pHead;
-            while (pRHSCurr->m_pNext)
+            clear();
+            if (rhs.m_pHead)
             {
-                pRHSCurr = pRHSCurr->m_pNext;
-                pHead->m_pNext = new SinglyNode();
-                pHead = pHead->m_pNext;
-                pHead->m_element = pRHSCurr->m_element;
+                auto pRHSHead = rhs.m_pHead;
+                while (pRHSHead)
+                {
+                    push_back(pRHSHead->m_element);
+                    pRHSHead = pRHSHead->m_pNext;
+                }
             }
-            m_size = rhs.m_size;
-            /**
-             * Don't need to allocate separate memory for m_pTail
-             * This has been already done by the statement pHead->m_pNext = new SinglyNode();
-             * above while iterating through the source list
-             */
-            m_pTail = pRHSCurr;
         }
     }
 
@@ -114,15 +140,12 @@ namespace swarnendu
     {
         if (empty())
         {
-            auto pNewNode = new SinglyNode();
-            pNewNode->m_element = val;
-            m_pHead = pNewNode;
+            m_pHead = new SinglyNode(val);
             m_pTail = m_pHead;
         }
         else
         {
-            auto pNewNode = new SinglyNode();
-            pNewNode->m_element = val;
+            auto pNewNode = new SinglyNode(val);
             pNewNode->m_pNext = m_pHead;
             m_pHead = pNewNode;
         }
@@ -133,16 +156,12 @@ namespace swarnendu
     {
         if (empty())
         {
-            auto pNewNode = new SinglyNode();
-            pNewNode->m_element = val;
-            m_pHead = pNewNode;
+            m_pHead = new SinglyNode(val);
             m_pTail = m_pHead;
         }
         else
         {
-            auto pNewNode = new SinglyNode();
-            pNewNode->m_element = val;
-            m_pTail->m_pNext = pNewNode;
+            m_pTail->m_pNext = new SinglyNode(val);
             m_pTail = m_pTail->m_pNext;
         }
         ++m_size;
@@ -152,35 +171,29 @@ namespace swarnendu
     {
         if (empty())
         {
-            std::cout << std::endl << "The list is empty. Item will be inserted at the fornt" << std::endl;
             push_front(val);
         }
-        else if (pos == 1)
+        else if (pos == 0)
         {
             push_front(val);
         }
         else if (pos > m_size)
         {
-            std::cout << std::endl << "The list is smaller than the pos desired. Item will be inserted at the back" << std::endl;
             push_back(val);
         }
         else
         {
-            auto pCurrNode = m_pHead;
-            SinglyNode* pPrevNode = nullptr;
+            auto pNextNode = m_pHead->m_pNext;
+            auto pPrevNode = m_pHead;
             for (size_t cnt = 0; cnt < pos; ++cnt)
             {
-                pPrevNode = pCurrNode;
-                pCurrNode = pCurrNode->m_pNext;
+               pPrevNode = pNextNode;
+               pNextNode = pNextNode->m_pNext;
             }
 
-            //std::cout << std::endl << "pCurrNode->m_element = " << pCurrNode->m_element << std::endl;
-
-            auto pNewNode = new SinglyNode();
-            pNewNode->m_element = val;
-
+            auto pNewNode = new SinglyNode(val);
+            pNewNode->m_pNext = pNextNode;
             pPrevNode->m_pNext = pNewNode;
-            pNewNode->m_pNext = pCurrNode;
             ++m_size;
         }
     }
@@ -189,65 +202,68 @@ namespace swarnendu
     {
         if (empty())
         {
-            std::cout << std::endl << "The list is empty. Item will be inserted at the fornt" << std::endl;
             push_front(val);
         }
         else if (1 == m_size)
         {
-            std::cout << std::endl << "The list has only one element. Item will be inserted at the fornt" << std::endl;
             push_front(val);
         }
         else
         {
-            push_at(m_size / 2, val);
+            push_at(((m_size / 2) + (m_size % 2)), val);
         }
     }
 
-    bool SinglyLinkedList::pop_front()
+    int SinglyLinkedList::pop_front()
     {
         if (empty())
         {
-            std::cout << std::endl << "The list is empty. Nothing to delete" << std::endl;
-            return false;
+            return INT_MIN;
         }
         else if (size() == 1)
         {
+            auto retVal = m_pHead->m_element;
             clear();
-            return true;
+            return retVal;
         }
         else
         {
             auto pForntNode = m_pHead;
+            auto retVal = m_pHead->m_element;
             m_pHead = m_pHead->m_pNext;
-            if (pForntNode)
+            if (pForntNode->m_pNext)
+            {
+                //Break the link of the previous head node before deletion
+                pForntNode->m_pNext = nullptr;
                 delete pForntNode;
+            }
 
             pForntNode = nullptr;
             --m_size;
-            return true;
+            return retVal;
         }
     }
 
-    bool SinglyLinkedList::pop_back()
+    int SinglyLinkedList::pop_back()
     {
         if (empty())
         {
-            std::cout << std::endl << "The list is empty. Nothing to delete" << std::endl;
-            return false;
+            return INT_MIN;
         }
         else if (size() == 1)
         {
+            auto retVal = m_pTail->m_element;
             clear();
-            return true;
+            return retVal;
         }
         else
         {
+            auto retVal = m_pTail->m_element;
             auto pLastNode = m_pHead;
             SinglyNode* pPrevNode = nullptr;
             while (pLastNode->m_pNext)
             {
                 pPrevNode = pLastNode;
-                //std::cout << std::endl << "pLastNode->m_element = " << pLastNode->m_element << std::endl;
                 pLastNode = pLastNode->m_pNext;
             }
             if (pLastNode)
@@ -257,26 +273,23 @@ namespace swarnendu
             pPrevNode->m_pNext = nullptr;
             m_pTail = pPrevNode;
             --m_size;
-            return true;
+            return retVal;
         }
     }
 
-    bool SinglyLinkedList::pop_at(const size_t pos)
+    int SinglyLinkedList::pop_at(const size_t pos)
     {
         if (empty())
         {
-            std::cout << std::endl << "The list is empty. Nothing to delete" << std::endl;
-            return false;
+            return INT_MIN;
         }
         else if (size() <= pos)
         {
-            std::cout << std::endl << "The list is having only " << m_size << " elements. Nothing to delete" << std::endl;
-            return false;
+            return INT_MIN;
         }
         else if ((size() - 1) == pos)
         {
-            pop_back();
-            return true;
+            return pop_back();
         }
         else
         {
@@ -289,21 +302,25 @@ namespace swarnendu
             }
             pPrevNode->m_pNext = pDelNode->m_pNext;
             
+            auto retVal = INT_MIN;
             if (pDelNode)
+            {
+                retVal = pDelNode->m_element;
+                pDelNode->m_pNext = nullptr; //Break the link so that deleting it doesn't invoke entire list recusively.
                 delete pDelNode;
+            }
             pDelNode = nullptr;
 
             --m_size;
-            return true;
+            return retVal;
         }
     }
 
-    bool SinglyLinkedList::pop_middle()
+    int SinglyLinkedList::pop_middle()
     {
         if (empty())
         {
-            std::cout << std::endl << "The list is empty. Nothing to delete" << std::endl;
-            return false;
+            return INT_MIN;
         }
         else
         {
@@ -311,42 +328,19 @@ namespace swarnendu
         }
     }
 
-    void SinglyLinkedList::display() noexcept
+    int* SinglyLinkedList::find(const int val) const noexcept
     {
         if (empty())
-        {
-            std::cout << "The list is empty. Nothing to display" << std::endl;
-        }
-        else
-        {
-            auto pHead = m_pHead;
-            std::cout << std::endl;
-            while (pHead)
-            {
-                std::cout << pHead->m_element;
-                pHead = pHead->m_pNext;
-                if (pHead)
-                    std::cout << " --> ";
-                else
-                    std::cout << " --> NULL";
-            }
-            std::cout << std::endl;
-        }
-    }
-
-    bool SinglyLinkedList::find(const int val) noexcept
-    {
-        if (empty())
-            return false;
+            return nullptr;
 
         auto pHead = m_pHead;
         while(pHead)
         {
             if (pHead->m_element == val)
-                return true;
+                return &pHead->m_element;
 
             pHead = pHead->m_pNext;
         }
-        return false;
+        return nullptr;
     }
 }
