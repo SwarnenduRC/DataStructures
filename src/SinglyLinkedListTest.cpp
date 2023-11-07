@@ -299,3 +299,11 @@ TEST_F(SinglyLinkedListTest, testPushMiddle)
     EXPECT_EQ(2, *slist.find(2));
 }
 
+TEST_F(SinglyLinkedListTest, testMakeCyclic)
+{
+    SinglyLinkedList slist = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    ASSERT_FALSE(SinglyLinkedList::isCyclic(slist.getHead()));
+    slist.makeCyclic();
+    ASSERT_TRUE(SinglyLinkedList::isCyclic(slist.getHead()));
+}
+

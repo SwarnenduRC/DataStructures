@@ -33,6 +33,13 @@ namespace swarnendu
             void push_back(const int val);
             void push_at(const size_t pos, const int val);
             void push_middle(const int val);
+            /**
+             * @brief Makes the list cyclic
+             *        This function makes the linked ist
+             *        a cyclic one by making next of m_pTail
+             *        pointing back to m_pHead
+             */
+            void makeCyclic();
 
             int pop_front();
             int pop_back();
@@ -45,6 +52,19 @@ namespace swarnendu
             inline size_t size() const noexcept { return m_size; }
             inline SinglyNode* getHead() const noexcept { return m_pHead; }
             inline SinglyNode* getTail() const noexcept { return m_pTail; }
+
+            /**
+             * @brief Detects whether the given linked list is cyclic in nature or not
+             *        A static function to detect whether the given linked list is
+             *        cyclic in nature or not. It uses two pointers solution or 
+             *        Floyd's cycle finding algorithm, also known as "tortoise and hare"
+             *        algorithm
+             * 
+             * @param pHead The head of the linked list
+             * @return true If the list is cyclic, 
+             * @return false otherwise
+             */
+            static bool isCyclic(SinglyNode* pHead);
 
         private:
             SinglyNode* m_pHead = nullptr;

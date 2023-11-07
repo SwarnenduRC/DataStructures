@@ -36,8 +36,13 @@ namespace swarnendu
          * passing and realigning pointers. So deleting
          * only the head node would clear up the memory
          * entirely by calling the destructor of SinglyNode
-         * in a recursive fashion.
+         * in a recursive fashion. But before that check if
+         * the list is cyclic in nature, and if so, then delink
+         * or break the cycle first before calling delete on head
          */
+        if (isCyclic(m_pHead))
+            m_pTail->m_pNext = nullptr;
+
         if (m_pHead)
             delete m_pHead;
 
@@ -53,8 +58,14 @@ namespace swarnendu
             /**
              * Deleting only the head pointer will
              * recursively the entire list as the 
-             * destructor of SinglyNode will get called
+             * destructor of SinglyNode will get called.
+             * But before that check if the list is cyclic
+             * in nature, and if so, then delink or break the 
+             * cycle first before calling delete on head
              */
+            if (isCyclic(m_pHead))
+                m_pTail->m_pNext = nullptr;
+
             if (m_pHead)
                 delete m_pHead;
 
@@ -333,6 +344,9 @@ namespace swarnendu
         if (empty())
             return nullptr;
 
+        if (m_pTail->m_element == val)
+            return &m_pTail->m_element;
+        
         auto pHead = m_pHead;
         while(pHead)
         {
@@ -342,5 +356,29 @@ namespace swarnendu
             pHead = pHead->m_pNext;
         }
         return nullptr;
+    }
+
+    void SinglyLinkedList::makeCyclic()
+    {
+        if (m_size > 1)
+            m_pTail->m_pNext = m_pHead;
+    }
+
+    bool SinglyLinkedList::isCyclic(SinglyNode* pHead)
+    {
+        if (!pHead)
+            return false;
+
+        auto pFast = pHead;
+        auto pSlow = pHead;
+
+        while (pFast && pFast->m_pNext)
+        {
+            pFast = pFast->m_pNext->m_pNext;
+            pSlow = pSlow->m_pNext;
+            if (pFast == pSlow)
+                return true;    //Cycle detected
+        }
+        return false;   //No cycle detected
     }
 }
