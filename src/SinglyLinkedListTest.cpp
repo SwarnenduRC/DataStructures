@@ -341,3 +341,26 @@ TEST_F(SinglyLinkedListTest, testInterSection)
     }
 }
 
+TEST_F(SinglyLinkedListTest, testReverse)
+{
+    auto testList = [](SinglyLinkedList& linkedList, const std::initializer_list<int>& iList)
+    {
+        auto pHead = linkedList.getHead();
+        for (const auto item : iList)
+        {
+            EXPECT_EQ(item, pHead->m_element);
+            pHead = pHead->m_pNext;
+        }
+        EXPECT_EQ(nullptr, pHead);
+    };
+
+    std::initializer_list<int> iList = {1, 2, 3, 4, 5, 6};
+    SinglyLinkedList lList = {iList};
+    testList(lList, iList);
+
+    std::initializer_list<int> iListReverse = {6, 5, 4, 3, 2, 1};
+    lList.reverse();
+    testList(lList, iListReverse);
+    EXPECT_EQ(1, lList.getTail()->m_element);
+}
+

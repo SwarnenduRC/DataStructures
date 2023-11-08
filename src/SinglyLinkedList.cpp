@@ -382,6 +382,30 @@ namespace swarnendu
         return false;   //No cycle detected
     }
 
+    void SinglyLinkedList::reverse()
+    {
+        if (empty())
+            return;
+
+        auto pCurr = m_pHead;
+        SinglyNode* pPrev = nullptr;
+        uint16_t cnt = 1;
+        while (pCurr)
+        {                
+            auto pNext = pCurr->m_pNext;
+            pCurr->m_pNext = pPrev;
+            pPrev = pCurr;
+            //Change the tail pointer
+            if (1 == cnt)
+            {
+                m_pTail = pCurr;
+                cnt++;
+            }
+            pCurr = pNext;
+        }
+        m_pHead = pPrev;
+    }
+
     bool SinglyLinkedList::areListsIntersected(SinglyNode* pHead1, SinglyNode* pHead2)
     {
         if (!pHead1 || !pHead2)
@@ -392,7 +416,6 @@ namespace swarnendu
 
         auto pList1 = pHead1;
         auto pList2 = pHead2;
-
         /**
          * @brief The logic to find if the lists are inter connected
          *        or not is pretty simple actually. We start traversing

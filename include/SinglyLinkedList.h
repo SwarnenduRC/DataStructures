@@ -40,6 +40,11 @@ namespace swarnendu
              *        pointing back to m_pHead
              */
             void makeCyclic();
+            /**
+             * @brief Reverses a linked list
+             *        Reverses a linked list in O(N) time
+             */
+            void reverse();
 
             int pop_front();
             int pop_back();
