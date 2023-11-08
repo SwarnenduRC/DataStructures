@@ -66,6 +66,19 @@ namespace swarnendu
              */
             static bool isCyclic(SinglyNode* pHead);
 
+            /**
+             * @brief Checks if there is an intersection between the two linked lists
+             *        A static function to check if the linked lists in question are
+             *        intersected or not. Throws a std runtime exception if one of the
+             *        given list cyclic in nature
+             * 
+             * @param pHead1 The head pointer of the first list
+             * @param pHead2 The head pointer of the second list
+             * @return true If the lists are inter connected, 
+             * @return false otherwise
+             */
+            static bool areListsIntersected(SinglyNode* pHead1, SinglyNode* pHead2);
+
         private:
             SinglyNode* m_pHead = nullptr;
             SinglyNode* m_pTail = nullptr;

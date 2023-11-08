@@ -307,3 +307,37 @@ TEST_F(SinglyLinkedListTest, testMakeCyclic)
     ASSERT_TRUE(SinglyLinkedList::isCyclic(slist.getHead()));
 }
 
+TEST_F(SinglyLinkedListTest, testInterSection)
+{
+    {
+        SinglyLinkedList list1 = {1, 2, 3, 4, 5, 6};
+        SinglyLinkedList list2 = {7, 8, 9};
+        EXPECT_FALSE(SinglyLinkedList::areListsIntersected(list1.getHead(), list2.getHead()));
+    }
+    {
+        SinglyLinkedList list1 = {1, 2, 3, 4, 5, 6};
+        SinglyLinkedList list2 = {7, 8, 9};
+        
+        auto pList1 = list1.getHead();
+        for (auto cnt = 0; cnt < 4 && pList1; ++cnt)
+            pList1 = pList1->m_pNext;
+
+        auto pList2 = list2.getTail();
+        pList2->m_pNext = pList1;   //Make the intersection
+        EXPECT_TRUE(SinglyLinkedList::areListsIntersected(list1.getHead(), list2.getHead()));
+        pList2->m_pNext = nullptr;  // Break the intersection otherwise it would lead to double free
+    }
+    {
+        SinglyLinkedList list1 = {1, 2, 3, 4, 5, 6};
+        SinglyLinkedList list2 = {7, 8, 9, 4};
+        list1.makeCyclic();
+        EXPECT_THROW(SinglyLinkedList::areListsIntersected(list1.getHead(), list2.getHead()), std::runtime_error);
+    }
+    {
+        SinglyLinkedList list1 = {1, 2, 3, 4, 5, 6};
+        SinglyLinkedList list2 = {7, 8, 9, 4};
+        list2.makeCyclic();
+        EXPECT_THROW(SinglyLinkedList::areListsIntersected(list1.getHead(), list2.getHead()), std::runtime_error);
+    }
+}
+

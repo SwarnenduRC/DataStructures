@@ -381,4 +381,34 @@ namespace swarnendu
         }
         return false;   //No cycle detected
     }
+
+    bool SinglyLinkedList::areListsIntersected(SinglyNode* pHead1, SinglyNode* pHead2)
+    {
+        if (!pHead1 || !pHead2)
+            return false;
+
+        if (isCyclic(pHead1) || isCyclic(pHead2))
+            throw std::runtime_error("One of the list is cyclic in nature");
+
+        auto pList1 = pHead1;
+        auto pList2 = pHead2;
+
+        /**
+         * @brief The logic to find if the lists are inter connected
+         *        or not is pretty simple actually. We start traversing
+         *        both the lists at the same time and check for theirs
+         *        equality. If found we return TRUE then and there.
+         *        Otherwise we keep traversing. If one of the list
+         *        reaches its end point before the other one then we
+         *        know that the lists are not interconnected. The time
+         *        complexity of this approach is O(m+n) while for the
+         *        brute force aprroach it would be O(m*n)
+         */
+        while (pList1 != pList2)
+        {
+            pList1 = pList1 ? pList1->m_pNext : pHead2;
+            pList2 = pList2 ? pList2->m_pNext : pHead1;
+        }
+        return pList1 != nullptr;
+    }
 }
