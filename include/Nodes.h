@@ -146,7 +146,7 @@ namespace swarnendu_nodes
         inline void setData(const T& val) noexcept { m_data = val; }
     };
 
-    template<typename T = int>
+    template<typename T>
     struct TreeNode
     {
         T m_data;
@@ -214,6 +214,8 @@ namespace swarnendu_nodes
             }
             return *this;
         }
+        inline T getData() const noexcept { return m_data; }
+        inline void setData(const T& data) noexcept { m_data = data; }
     };
 } // namespace swarnendu_nodes
 
