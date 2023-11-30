@@ -35,14 +35,14 @@ namespace swarnendu
                 {
                     std::vector<T> vec(initList);
                     std::sort(vec.begin(), vec.end());  //Sort it so that a balanced BST can be constructed out of it
-                    m_pRoot = std::move(constructBalancedBST(vec, 0, static_cast<int>(initList.size())));
+                    m_pRoot.reset(constructBalancedBST(vec, 0, static_cast<int>(initList.size() - 1)));
                     m_size = initList.size();
                     m_height = calculateHeight(m_pRoot);
                 }
             }
             ~BSTree() = default;
             BSTree(const BSTree& rhs) noexcept
-                : m_pRoot(rhs.m_pRoot)
+                : m_pRoot(std::make_unique<TreeNode<T>>(*rhs.m_pRoot))
                 , m_size(rhs.m_size)
                 , m_height(rhs.m_height)
             {
@@ -184,7 +184,7 @@ namespace swarnendu
                 clear();
                 if (!rhs.empty())
                 {
-                    m_pRoot.reset(std::make_unique<TreeNode<T>>(rhs.m_pRoot->m_data));
+                    m_pRoot.reset(new TreeNode<T>(rhs.m_pRoot->getData()));
                     copyTreePreOrder(rhs.m_pRoot, m_pRoot);
                     m_size = rhs.size();
                     m_height = rhs.height();
@@ -317,6 +317,7 @@ namespace swarnendu
                          * the property of the BST.
                          */
                         pRoot->m_data = std::move(findInorderSuccessor(pRoot->m_pRight));
+                        return true;
                     }
                 }
                 else if (val > pRoot->m_data)   //Node resides in the left half of the root node
@@ -407,6 +408,7 @@ namespace swarnendu
                         return std::move(retVal);
                     }
                 }
+                return T{};
             }
             /**
              * @brief Finds inorder predecessor of a node. Once found it
@@ -432,6 +434,7 @@ namespace swarnendu
                         return std::move(retVal);
                     }
                 }
+                return T{};
             }
             /**
              * @brief Copies a BST into another in a preorder traversal fashion.
@@ -462,17 +465,16 @@ namespace swarnendu
              * @param endIdx The ending index of the vector
              * @return TreeNodePtr The constructed root
              */
-            std::unique_ptr<TreeNode<T>> constructBalancedBST(const std::vector<T>& vec, int startIdx, int endIdx)
+            TreeNode<T>* constructBalancedBST(const std::vector<T>& vec, const int startIdx, const int endIdx)
             {
                 if (startIdx > endIdx)
                     return nullptr;
 
-                auto midIdx = static_cast<int>((endIdx - startIdx) / 2);
-                midIdx += static_cast<int>((endIdx - startIdx) % 2); 
-                auto pRoot = std::make_unique<TreeNode<T>>(vec[midIdx]);
-                pRoot->m_pLeft = std::move(constructBalancedBST(vec, startIdx, (midIdx - 1)));
-                pRoot->m_pRight = std::move(constructBalancedBST(vec, (midIdx + 1), endIdx));
-                return std::move(pRoot);
+                auto midIdx = startIdx + (endIdx - startIdx) / 2;
+                auto pRoot = new TreeNode<T>(vec[midIdx]);
+                pRoot->m_pLeft.reset(constructBalancedBST(vec, startIdx, (midIdx - 1)));
+                pRoot->m_pRight.reset(constructBalancedBST(vec, (midIdx + 1), endIdx));                
+                return pRoot;
             }
 
             /**

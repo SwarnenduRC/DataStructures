@@ -76,7 +76,7 @@ namespace swarnendu
                 if (!m_list)
                     m_list = std::make_unique<DoublyLinkedList<T>>();
 
-                m_list->push_back(val);
+                m_list->push_front(val);
                 m_size = m_list->size();
             }
             T& top() const

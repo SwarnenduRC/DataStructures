@@ -19,7 +19,7 @@ TEST_F(StackTest, testDefaultConstructor)
 
 TEST_F(StackTest, testInitializerListConstructor)
 {
-    Stack<int> stack = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    Stack<int> stack = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
     std::stack<int> refStack;
     for (auto val = 10; val >= 1; --val)
         refStack.push(val);
@@ -29,7 +29,7 @@ TEST_F(StackTest, testInitializerListConstructor)
 
 TEST_F(StackTest,testCopyConstructor)
 {
-    Stack<int> stack = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    Stack<int> stack = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
     std::stack<int> refStack;
     for (auto val = 10; val >= 1; --val)
         refStack.push(val);
@@ -44,7 +44,7 @@ TEST_F(StackTest,testCopyConstructor)
 
 TEST_F(StackTest,testAssignment)
 {
-    Stack<int> stack = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    Stack<int> stack = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
     std::stack<int> refStack;
     for (auto val = 10; val >= 1; --val)
         refStack.push(val);
@@ -59,7 +59,7 @@ TEST_F(StackTest,testAssignment)
 
 TEST_F(StackTest,testMove)
 {
-    Stack<int> stack = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    Stack<int> stack = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
 
     auto stackMove = std::move(stack);
     ASSERT_TRUE(stack.empty());
@@ -75,7 +75,7 @@ TEST_F(StackTest,testMove)
 
 TEST_F(StackTest,testMoveAssignment)
 {
-    Stack<int> stack = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    Stack<int> stack = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
     
     m_stack = std::move(stack);
     ASSERT_TRUE(stack.empty());
@@ -91,12 +91,12 @@ TEST_F(StackTest,testMoveAssignment)
 
 TEST_F(StackTest, testSwap)
 {
-    Stack<int> stack1 = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    Stack<int> stack1 = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
     std::stack<int> refStack1;
     for (auto val = 10; val >= 1; --val)
         refStack1.push(val);
 
-    Stack<int> stack2 = {11, 12, 13, 14, 15};
+    Stack<int> stack2 = { 15, 14, 13, 12, 11 };
     std::stack<int> refStack2;
     for (auto val = 15; val >= 11; --val)
         refStack2.push(val);
@@ -108,7 +108,7 @@ TEST_F(StackTest, testSwap)
 
 TEST_F(StackTest, testFind)
 {
-    Stack<int> stack = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    Stack<int> stack = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
     EXPECT_TRUE(stack.find(1));
     stack.pop();
     EXPECT_FALSE(stack.find(1));
@@ -116,7 +116,7 @@ TEST_F(StackTest, testFind)
 
 TEST_F(StackTest, testClear)
 {
-    Stack<int> stack = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    Stack<int> stack = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
     ASSERT_FALSE(stack.empty());
     size_t stackExpectedSize = 10;
     ASSERT_EQ(stackExpectedSize, stack.size());
