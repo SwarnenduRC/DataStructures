@@ -204,12 +204,8 @@ namespace swarnendu
             {
                 std::optional<T> retVal;
                 if (empty())
-                {
-                    if (std::is_integral<T>::value) //Only for testing purpose
-                        return 0;
-                    else
-                        return std::nullopt;
-                }
+                    return std::nullopt;
+                    
                 if (size() == 1)
                 {
                     retVal = std::move(m_pHead->getData());
@@ -233,12 +229,8 @@ namespace swarnendu
             std::optional<T> pop_back()
             {
                 if (empty())
-                {
-                    if (std::is_integral<T>::value) //Only for testing purpose
-                        return 0;
-                    else
-                        return std::nullopt;
-                }
+                    return std::nullopt;
+
                 if (size() == 1)
                 {
                     auto retVal = std::move(m_pTail->getData());
@@ -332,7 +324,6 @@ namespace swarnendu
                         auto retVal = std::move(pNode->getData());
                         pNode->m_pPrev.lock()->m_pNext = pNode->m_pNext;
                         pNode->m_pNext->m_pPrev = pNode->m_pPrev;
-                        //pNode->reset();
                         --m_size;
                         return std::move(retVal);
                     }
