@@ -3,6 +3,7 @@
 #include "DoublyLinkedListTest.h"
 #include "StackTest.h"
 #include "QueueTest.h"
+#include "DequeTest.h"
 #include "BSTTest.h"
 
 int main(int argc, char** argv)

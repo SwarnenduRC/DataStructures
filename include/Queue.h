@@ -9,6 +9,9 @@
  * 
  */
 
+#ifndef QUEUE_H
+#define QUEUE_H
+
 #include <exception>
 #include <algorithm>
 #include <memory>
@@ -31,7 +34,7 @@ namespace swarnendu
             {
                 if (iList.size())
                 {
-                    for (const auto element : iList)
+                    for (const auto& element : iList)
                         push(element);
                 }
             }
@@ -67,7 +70,7 @@ namespace swarnendu
                 }
                 return *this;
             }
-            ~Queue() noexcept
+            virtual ~Queue() noexcept
             {
                 if (m_list)
                     clear();
@@ -124,8 +127,10 @@ namespace swarnendu
                 }
             }
         
-        private:
+        protected:
             std::unique_ptr<DoublyLinkedList<T>> m_list = nullptr;
             size_t m_size = 0;
     };
 } // namespace swarnendu
+
+#endif
