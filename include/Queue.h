@@ -116,7 +116,7 @@ namespace swarnendu
             }
             inline bool empty() const noexcept { return (m_size ? false : true); }
             inline size_t size() const noexcept { return m_size; }
-            inline bool find(const T& val) const noexcept { return std::get<0>(m_list->find(val)); }
+            inline bool find(const T& val) const noexcept { return m_list->find(val); }
             void clear()
             {
                 if (!empty())

@@ -11,6 +11,7 @@
 #include "DoublyLinkedList.h"
 
 #include <gtest/gtest.h>
+#include <list>
 
 using swarnendu::DoublyLinkedList;
 using swarnendu_nodes::DoublyNode;
@@ -18,28 +19,40 @@ using swarnendu_nodes::DoublyNode;
 class DoublyLinkedListTest : public ::testing::Test
 {
     public:
-        void testElementsInList(const std::vector<int>& elementsVec, DoublyNode<int>* pHead, DoublyNode<int>* pTail)
+        void testElementsInList(const std::list<int>& refList, DoublyLinkedList<int>& list)
         {
-            if (elementsVec.empty())
-            {
-                ASSERT_EQ(nullptr, pHead);
-                ASSERT_EQ(nullptr, pTail);
-            }
+            if (refList.empty())
+                ASSERT_TRUE(list.empty());
+            
             else
             {
-                for (auto itr = elementsVec.cbegin(); itr != elementsVec.cend(); ++itr)
-                {
-                    EXPECT_EQ(*itr, pHead->getData());
-                    pHead = pHead->m_pNext.get();
-                }
-                ASSERT_EQ(nullptr, pHead);
+                auto refItr = refList.begin();
+                auto itr = list.begin();
+                for (; refItr != refList.end() && itr != list.end(); ++refItr, ++itr)
+                    EXPECT_EQ(*refItr, *itr);
 
-                for (auto itr = elementsVec.crbegin(); itr != elementsVec.crend(); ++itr)
-                {
-                    EXPECT_EQ(*itr, pTail->getData());
-                    pTail = pTail->m_pPrev.lock().get();
-                }
-                ASSERT_EQ(nullptr, pTail);
+                auto rRefItr = refList.rbegin();
+                auto rItr = list.rbegin();
+                for (; rRefItr != refList.rend() && rItr != list.rend(); ++rItr, ++rRefItr)
+                    EXPECT_EQ(*rRefItr, *rItr);
+            }
+        }
+        void testElementsInList(const std::list<char>& refList, DoublyLinkedList<char>& list)
+        {
+            if (refList.empty())
+                ASSERT_TRUE(list.empty());
+            
+            else
+            {
+                auto refItr = refList.begin();
+                auto itr = list.begin();
+                for (; refItr != refList.end() && itr != list.end(); ++refItr, ++itr)
+                    EXPECT_EQ(*refItr, *itr);
+
+                auto rRefItr = refList.rbegin();
+                auto rItr = list.rbegin();
+                for (; rRefItr != refList.rend() && rItr != list.rend(); ++rItr, ++rRefItr)
+                    EXPECT_EQ(*rRefItr, *rItr);
             }
         }
     protected:
