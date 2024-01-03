@@ -126,6 +126,28 @@ TEST_F(StackTest, testClear)
     ASSERT_EQ(stackExpectedSize, stack.size());
 }
 
+TEST_F(StackTest, testComparisonOperators)
+{
+    {
+        Stack<int> stack1 = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+        Stack<int> stack2 = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+        EXPECT_TRUE(stack1 == stack2);
+        EXPECT_FALSE(stack1 != stack2);
+    }
+    {
+        Stack<int> stack1 = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+        Stack<int> stack2 = { 1, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+        EXPECT_FALSE(stack1 == stack2);
+        EXPECT_TRUE(stack1 != stack2);
+    }
+    {
+        Stack<int> stack1 = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+        Stack<int> stack2 = { 10, 9, 8, 7, 6, 5, 4, 3, 2 };
+        EXPECT_FALSE(stack1 == stack2);
+        EXPECT_TRUE(stack1 != stack2);
+    }
+}
+
 /**
  * The push, pop and top functions are already
  * been tested in initializer list constructor

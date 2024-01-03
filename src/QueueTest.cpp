@@ -111,6 +111,28 @@ TEST_F(QueueTest, testSwapAndFind)
     testQueue(refQ2, queue1);
 }
 
+TEST_F(QueueTest, testComparisonOperators)
+{
+    {
+        Queue<int> queue1 = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+        Queue<int> queue2 = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+        EXPECT_TRUE(queue1 == queue2);
+        EXPECT_FALSE(queue1 != queue2);
+    }
+    {
+        Queue<int> queue1 = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+        Queue<int> queue2 = { 1, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+        EXPECT_FALSE(queue1 == queue2);
+        EXPECT_TRUE(queue1 != queue2);
+    }
+    {
+        Queue<int> queue1 = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+        Queue<int> queue2 = { 10, 9, 8, 7, 6, 5, 4, 3, 2 };
+        EXPECT_FALSE(queue1 == queue2);
+        EXPECT_TRUE(queue1 != queue2);
+    }
+}
+
 /**
  * front, back, clear, pop etc methods
  * are tested through either testQueue

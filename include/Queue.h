@@ -70,6 +70,14 @@ namespace swarnendu
                 }
                 return *this;
             }
+            bool operator==(const Queue& rhs) const noexcept
+            {
+                return *m_list == *rhs.m_list;
+            }
+            bool operator!=(const Queue& rhs) const noexcept
+            {
+                return !(*m_list == *rhs.m_list);
+            }
             virtual ~Queue() noexcept
             {
                 if (m_list)

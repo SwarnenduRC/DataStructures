@@ -20,6 +20,9 @@ class DequeTest : public ::testing::Test
     public:
         template<typename T>
         void testDeque(std::deque<T>& refQ, Deque<T>& actualQ) const noexcept;
+
+        template<typename T>
+        void testDequeViaIteration(std::deque<T>& refQ, Deque<T>& actualQ) const noexcept;
         
     protected:
         Deque<int> m_deque;

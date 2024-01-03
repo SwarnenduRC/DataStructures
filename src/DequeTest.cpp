@@ -29,6 +29,69 @@ void DequeTest::testDeque(std::deque<T>& refQ, Deque<T>& actualQ) const noexcept
     EXPECT_EQ(refQ.back(), actualQ.back());
 }
 
+template<typename T>
+void DequeTest::testDequeViaIteration(std::deque<T>& refQ, Deque<T>& actualQ) const noexcept
+{
+    {
+        auto qItr = actualQ.begin();
+        auto refqItr = refQ.begin();
+        while (qItr != actualQ.end() && refqItr != refQ.end())
+        {
+            EXPECT_EQ(*qItr, *refqItr);
+            ++qItr;
+            ++refqItr;
+        }
+        ASSERT_EQ(qItr, actualQ.end());
+        ASSERT_EQ(refqItr, refQ.end());
+    }
+    {
+        auto qItr = actualQ.rbegin();
+        auto refqItr = refQ.rbegin();
+        while (qItr != actualQ.rend() && refqItr != refQ.rend())
+        {
+            EXPECT_EQ(*qItr, *refqItr);
+            ++qItr;
+            ++refqItr;
+        }
+        ASSERT_EQ(qItr, actualQ.rend());
+        ASSERT_EQ(refqItr, refQ.rend());
+    }
+    {
+        auto qItr = actualQ.cbegin();
+        auto refqItr = refQ.cbegin();
+        while (qItr != actualQ.cend() && refqItr != refQ.cend())
+        {
+            EXPECT_EQ(*qItr, *refqItr);
+            ++qItr;
+            ++refqItr;
+        }
+        ASSERT_EQ(qItr, actualQ.cend());
+        ASSERT_EQ(refqItr, refQ.cend());
+    }
+    {
+        auto qItr = actualQ.crbegin();
+        auto refqItr = refQ.crbegin();
+        while (qItr != actualQ.crend() && refqItr != refQ.crend())
+        {
+            EXPECT_EQ(*qItr, *refqItr);
+            ++qItr;
+            ++refqItr;
+        }
+        ASSERT_EQ(qItr, actualQ.crend());
+        ASSERT_EQ(refqItr, refQ.crend());
+    }
+    {
+        auto refqItr = refQ.rbegin();
+        for (auto itr = actualQ.rbegin(); itr != actualQ.rend() && refqItr != refQ.rend(); ++itr, ++refqItr)
+            EXPECT_EQ(*itr, *refqItr);
+    }
+    {
+        auto refqItr = refQ.begin();
+        for (auto itr = actualQ.begin(); itr != actualQ.end() && refqItr != refQ.end(); ++itr, ++refqItr)
+            EXPECT_EQ(*itr, *refqItr);
+    }
+}
+
 TEST_F(DequeTest, testDefaultConstructor)
 {
     ASSERT_EQ(m_deque.size(), static_cast<size_t>(0));
@@ -173,4 +236,45 @@ TEST_F(DequeTest, testResizeWithValue)
     deque.resize(5, 'p');
     refDeque.resize(5, 'p');
     testDeque(refDeque, deque);
+}
+
+TEST_F(DequeTest, testComparisonOperators)
+{
+    {
+        Deque<int> queue1 = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+        Deque<int> queue2 = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+        EXPECT_TRUE(queue1 == queue2);
+        EXPECT_FALSE(queue1 != queue2);
+    }
+    {
+        Deque<int> queue1 = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+        Deque<int> queue2 = { 1, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+        EXPECT_FALSE(queue1 == queue2);
+        EXPECT_TRUE(queue1 != queue2);
+    }
+    {
+        Deque<int> queue1 = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+        Deque<int> queue2 = { 10, 9, 8, 7, 6, 5, 4, 3, 2 };
+        EXPECT_FALSE(queue1 == queue2);
+        EXPECT_TRUE(queue1 != queue2);
+    }
+}
+
+TEST_F(DequeTest, testIterators)
+{
+    Deque<char> deque = { 'a', 'e', 'i', 'o', 'u' };
+    std::deque<char> refDeque = { 'a', 'e', 'i', 'o', 'u' };
+    testDequeViaIteration(refDeque, deque);
+
+    deque.resize(5, 'p');
+    refDeque.resize(5, 'p');
+    testDequeViaIteration(refDeque, deque);
+
+    deque.resize(3, 'p');
+    refDeque.resize(3, 'p');
+    testDequeViaIteration(refDeque, deque);
+
+    deque.resize(5, 'p');
+    refDeque.resize(5, 'p');
+    testDequeViaIteration(refDeque, deque);
 }

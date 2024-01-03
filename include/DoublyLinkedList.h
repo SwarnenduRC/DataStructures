@@ -24,7 +24,7 @@ namespace swarnendu
     class DoublyLinkedList
     {
         public:
-        /**
+            /**
              * @brief Custom iterator structure for Doubly linked list.
              *        It is a custom iterator which will enable the
              *        traversal of the list much hassle free and hides
@@ -352,11 +352,18 @@ namespace swarnendu
                     return false;
                 else
                 {
-                    for (auto& itr : rhs)
+                    auto thisItr = begin();
+                    auto rhsItr = rhs.begin();
+                    while (thisItr != end() && rhsItr != rhs.end())
                     {
-                        if (!find(itr))
+                        if (*thisItr != *rhsItr)
                             return false;
+
+                        ++thisItr;
+                        ++rhsItr;
                     }
+                    if (thisItr != end() || rhsItr != rhs.end())
+                        return false;
                     return true;
                 }
             }
@@ -723,6 +730,10 @@ namespace swarnendu
                     }
                 }
             }
+            /**
+             * @brief Revrses the list. Shouldn't throw any exception
+             * 
+             */
             void reverse() noexcept
             {
                 if (empty())
@@ -768,15 +779,15 @@ namespace swarnendu
              * 
              * @return iterator 
              */
-            iterator begin() const { return iterator(m_pHead.get(), false); }
-            iterator end() const { return iterator(); }
-            iterator rbegin() const { return iterator(m_pTail.get(), true); }
-            iterator rend() const { return iterator(nullptr, true); }
+            iterator begin()            const { return iterator(m_pHead.get(), false);          }
+            iterator end()              const { return iterator();                              }
+            iterator rbegin()           const { return iterator(m_pTail.get(), true);           }
+            iterator rend()             const { return iterator(nullptr, true);                 }
 
-            const_iterator cbegin() const { return const_iterator(m_pHead.get(), false); }
-            const_iterator cend() const { return const_iterator(); }
-            const_iterator crbegin() const { return const_iterator(m_pTail.get(), true); }
-            const_iterator crend() const { return const_iterator(nullptr, true); }
+            const_iterator cbegin()     const { return const_iterator(m_pHead.get(), false);    }
+            const_iterator cend()       const { return const_iterator();                        }
+            const_iterator crbegin()    const { return const_iterator(m_pTail.get(), true);     }
+            const_iterator crend()      const { return const_iterator(nullptr, true);           }
         
         private:
             const_iterator findInternal(const T& val) noexcept

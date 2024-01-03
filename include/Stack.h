@@ -66,6 +66,14 @@ namespace swarnendu
                 }
                 return *this;
             }
+            bool operator==(const Stack& rhs) const noexcept
+            {
+                return *m_list == *rhs.m_list;
+            }
+            bool operator!=(const Stack& rhs) const noexcept
+            {
+                return !(*m_list == *rhs.m_list);
+            }
             ~Stack() noexcept
             {
                 if (m_list)

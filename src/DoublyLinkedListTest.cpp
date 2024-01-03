@@ -106,17 +106,6 @@ TEST_F(DoublyLinkedListTest, testPushFront)     //Push back is already tested vi
     testElementsInList(refListNew, dList);
 }
 
-/* TEST_F(DoublyLinkedListTest, testPushAt)
-{
-    DoublyLinkedList<int> dList = { 12, 13, 14, 15 };
-    std::list<int> refList = { 12, 13, 14, 15 };
-    testElementsInList(refList, dList);
-    dList.push_at(21, 2);
-    std::list<int> refListNew = { 12, 13, 21, 14, 15 };
-    EXPECT_EQ(refListNew.size(), dList.size());
-    testElementsInList(refListNew, dList);
-} */
-
 TEST_F(DoublyLinkedListTest, testPopFront)
 {
     DoublyLinkedList<int> dList = { 12, 13, 14, 15 };
@@ -369,12 +358,12 @@ TEST_F(DoublyLinkedListTest, testComparisonOperators)
     {
         DoublyLinkedList<int> dList1 = { 12, 13, 14, 15 };
         DoublyLinkedList<int> dList2 = { 15, 13, 14, 12 };
-        EXPECT_TRUE(dList1 == dList2);
-        EXPECT_FALSE(dList1 != dList2);
+        EXPECT_FALSE(dList1 == dList2);
+        EXPECT_TRUE(dList1 != dList2);
     }
     {
         DoublyLinkedList<int> dList1 = { 12, 13, 14, 15 };
-        DoublyLinkedList<int> dList2 = { 13, 14, 15 };
+        DoublyLinkedList<int> dList2 = { 12, 13, 14 };
         EXPECT_FALSE(dList1 == dList2);
         EXPECT_TRUE(dList1 != dList2);
     }
