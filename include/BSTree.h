@@ -273,7 +273,7 @@ namespace swarnendu
             /**
              * @brief Erases an element from the BST.
              *        It erases an element from the BST by recusively
-             *        finding it in the tree against the respecive
+             *        finding it in the tree against the respective
              *        root node of the given tree. Highly recusive
              *        in nature.
              * 
@@ -320,11 +320,11 @@ namespace swarnendu
                         return true;
                     }
                 }
-                else if (val > pRoot->m_data)   //Node resides in the left half of the root node
+                else if (val > pRoot->m_data)   //Node resides in the right half of the root node
                 {
                     return eraseElement(val, pRoot->m_pRight);
                 }
-                else if (val < pRoot->m_data)   //Node resides in the right half of the root node
+                else if (val < pRoot->m_data)   //Node resides in the left half of the root node
                 {
                     return eraseElement(val, pRoot->m_pLeft);
                 }
