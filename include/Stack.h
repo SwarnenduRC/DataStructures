@@ -8,6 +8,8 @@
  * @copyright Copyright (c) 2023
  * 
  */
+#ifndef _STACK_H_
+#define _STACK_H_
 
 #include <algorithm>
 #include <memory>
@@ -129,3 +131,5 @@ namespace swarnendu
             size_t m_size = 0;
     };
 } // namespace swarnendu
+
+#endif // _STACK_H_

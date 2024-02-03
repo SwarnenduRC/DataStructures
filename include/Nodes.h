@@ -9,7 +9,7 @@
  * 
  */
 #ifndef _NODES_H_
-#define _NODES_H_ 1
+#define _NODES_H_
 
 #include <cstdint>
 #include <cstddef>

@@ -8,6 +8,10 @@
  * @copyright Copyright (c) 2023
  * 
  */
+
+#ifndef _BSTREE_H_
+#define _BSTREE_H_
+
 #include "Nodes.h"
 
 #include <algorithm>
@@ -489,4 +493,6 @@ namespace swarnendu
     };
     
 }   //namespace swarnendu
+
+#endif //_BSTREE_H_
 

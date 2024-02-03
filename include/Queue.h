@@ -9,8 +9,8 @@
  * 
  */
 
-#ifndef QUEUE_H
-#define QUEUE_H
+#ifndef _QUEUE_H_
+#define _QUEUE_H_
 
 #include <exception>
 #include <algorithm>
@@ -141,4 +141,4 @@ namespace swarnendu
     };
 } // namespace swarnendu
 
-#endif
+#endif // _QUEUE_H_

@@ -9,6 +9,9 @@
  * 
  */
 
+#ifndef _SINGLY_LINKED_LIST_H_
+#define _SINGLY_LINKED_LIST_H_
+
 #include "Nodes.h"
 
 #include <initializer_list>
@@ -90,3 +93,5 @@ namespace swarnendu
             size_t m_size = 0;
     };
 } // namespace swarnendu
+
+#endif //_SINGLY_LINKED_LIST_H_

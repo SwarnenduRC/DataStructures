@@ -1,5 +1,5 @@
 #ifndef _AVL_TREE_H_
-#define _AVL_TREE_H_ 1
+#define _AVL_TREE_H_
 
 #include "Nodes.h"
 

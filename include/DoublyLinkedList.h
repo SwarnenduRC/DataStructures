@@ -9,8 +9,8 @@
  * 
  */
 
-#ifndef DOUBLY_LINKED_LIST_H
-#define DOUBLY_LINKED_LIST_H
+#ifndef _DOUBLY_LINKED_LIST_H_
+#define _DOUBLY_LINKED_LIST_H_
 
 #include "Nodes.h"
 
@@ -882,4 +882,4 @@ namespace swarnendu
     };
 } // namespace swarnendu
 
-#endif
+#endif  // _DOUBLY_LINKED_LIST_H_
