@@ -517,7 +517,7 @@ namespace swarnendu
              * 
              * @param first The starting postion
              * @param last The ending position
-             * @return iterator iterator An iterator pointing to the last element
+             * @return iterator An iterator pointing to the last element
              *         of the element to be erased, or end otherwise
              */
             iterator erase(const_iterator first, const_iterator last)
@@ -545,7 +545,7 @@ namespace swarnendu
             /**
              * @brief Inserts an element into the list
              * 
-             * @param pos Constant Iterator position before which the lement would be inserted
+             * @param pos Constant Iterator position before which the element would be inserted
              * @param val The value to be inserted
              * @return iterator The iterator pointing to the new element
              */
@@ -576,7 +576,7 @@ namespace swarnendu
             /**
              * @brief Inserts an element multiple times
              * 
-             * @param pos Constant Iterator position before which the lement would be inserted
+             * @param pos Constant Iterator position before which the element would be inserted
              * @param count The no of times the element needs to be inserted
              * @param val The value
              * @return iterator The iterator pointing to the new element first inserted
@@ -595,7 +595,7 @@ namespace swarnendu
             /**
              * @brief Inserts elements into the list
              * 
-             * @param pos Constant Iterator position before which the lements would be inserted
+             * @param pos Constant Iterator position before which the elements would be inserted
              * @param iList The initializer list which contains the elements to be inserted
              * @return iterator iterator The iterator pointing to the new element first inserted
              */

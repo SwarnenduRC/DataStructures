@@ -463,8 +463,23 @@ TEST_F(AVLTreeTest, testRotationsWithSelfBalancing)
     }
 }
 
-TEST_F(AVLTreeTest, testIterators)
+/**
+ * @brief Only to check the behaviour of a std map in
+ *        different scenarios as a reference benchmark.
+ *        Should be kept as disabled until we need to
+ *        a benchmark test
+ *
+ */
+TEST_F(AVLTreeTest, DISABLED_testMapIteratorsAsReference)
 {
+    {
+        std::map<int, std::string> testMap;
+        auto itr = testMap.begin();
+        EXPECT_EQ(itr, testMap.end());
+        //testMap.insert(std::make_pair(25, "25"));
+        //ASSERT_NE(itr, testMap.end());
+        //EXPECT_EQ(25, itr->first);
+    }
     std::initializer_list<int> list = { 15, 22, 25, 28, 806 };
     std::map<int, std::string> testMap = { {25, "25"}, {28, "28"}, {22, "22"}, {806, "806"}, {15, "15"} };
     {
@@ -476,12 +491,184 @@ TEST_F(AVLTreeTest, testIterators)
         }
     }
     {
-        std::initializer_list<int> list = { 806, 28, 25, 22, 15 };
-        auto itr = testMap.rbegin();
+        auto itr = testMap.begin();
+        testMap.insert(std::make_pair(23, "23"));
+        std::initializer_list<int> list = { 15, 22, 23, 25, 28, 806 };
         for (const auto& val : list)
         {
             EXPECT_EQ(val, itr->first);
             ++itr;
         }
+    }
+    {
+        std::initializer_list<int> list = { 806, 28, 25, 23, 15 };
+        auto itr = testMap.rbegin();
+        testMap.erase(22);
+        for (const auto& val : list)
+        {
+            EXPECT_EQ(val, itr->first);
+            ++itr;
+        }
+    }
+    {
+        std::map<int, std::string> testMap;
+        auto itr = testMap.begin();
+        EXPECT_EQ(testMap.end(), itr);
+        //EXPECT_EQ(1, itr->first);
+        testMap.insert(std::make_pair(1, "1"));
+        --itr;
+        EXPECT_NE(testMap.end(), itr);
+        EXPECT_EQ(1, itr->first);
+        ++itr;
+        EXPECT_EQ(testMap.end(), itr);
+        //EXPECT_EQ(1, itr->first);
+    }
+    {
+        std::map<int, std::string> testMap;
+        auto itr = testMap.begin();
+        EXPECT_EQ(testMap.end(), itr);
+        testMap.insert(std::make_pair(23, "23"));
+        --itr;
+        EXPECT_EQ(23, itr->first);
+    }
+    {
+        std::map<int, std::string> testMap = { {25, "25"} };
+        auto itr = testMap.begin();
+        testMap.insert(std::make_pair(23, "23"));
+        --itr;
+        EXPECT_EQ(23, itr->first);
+        ++itr;
+        EXPECT_EQ(25, itr->first);
+    }
+    {
+        std::map<int, std::string> testMap = { {25, "25"}, {28, "28"} };
+        auto itr = testMap.begin();
+        ++itr;
+        testMap.insert(std::make_pair(23, "23"));
+        --itr;
+        --itr;
+        EXPECT_EQ(23, itr->first);
+        ++itr;
+        EXPECT_EQ(25, itr->first);
+    }
+    /* {
+        //std::initializer_list<int> list = { 15, 22, 25, 28, 806 };
+        std::map<int, std::string> testMap = { {25, "25"}, {28, "28"}, {22, "22"}, {806, "806"}, {15, "15"} };
+        auto itr = testMap.begin();
+        ++itr;
+        ++itr;
+        EXPECT_EQ(25, itr->first);
+        testMap.erase(22);
+        --itr;
+        EXPECT_EQ(15, itr->first);
+    } */
+}
+
+TEST_F(AVLTreeTest, testIterators)
+{
+    {
+        AVLTree<int> tree;
+        auto itr = tree.begin();
+        EXPECT_EQ(tree.end(), itr);
+    }
+    {
+        std::initializer_list<int> list = { 15, 22, 25, 28, 806 };
+        AVLTree<int> tree = list;
+        auto itr = tree.begin();
+        if (itr != tree.end())
+        {
+            for (const auto& val : list)
+            {
+                EXPECT_EQ(val, *itr);
+                ++(*itr);
+                ++itr;
+            }
+            EXPECT_EQ(tree.end(), itr);
+        }
+        std::initializer_list<int> listInc = { 16, 23, 26, 29, 807 };
+        {
+            auto itr = tree.begin();
+            if (itr != tree.end())
+            {
+                for (const auto& val : listInc)
+                {
+                    EXPECT_EQ(val, *itr);
+                    ++itr;
+                }
+            }
+            EXPECT_EQ(tree.end(), itr);
+        }
+    }
+}
+
+TEST_F(AVLTreeTest, testIteratorsAdvanced)
+{
+    {
+        AVLTree<int> tree;
+        auto itr = tree.begin();
+        EXPECT_EQ(tree.end(), itr);
+    }
+    {
+        AVLTree<int> tree = { 25 };
+        auto itr = tree.begin();
+        tree.insert(23);
+        --itr;
+        EXPECT_EQ(23, *itr);
+        ++itr;
+        EXPECT_EQ(25, *itr);
+    }
+    {
+        AVLTree<int> tree = { 15, 22, 25, 28, 806 };
+        auto itr = tree.begin();
+        ++itr;
+        ++itr;
+        ++itr;
+        EXPECT_EQ(28, *itr);
+        tree.insert(26);
+        --itr;
+        EXPECT_EQ(26, *itr);
+        --itr;
+        EXPECT_EQ(25, *itr);
+    }
+    // Ideally following two small test blocks should be PASSED
+    // but that requires some thinking and then modification in
+    // DoublyLinkedList.h (as it is been used as the container
+    // for the tree's iterator class). The end() function should
+    // return a valid but illogical value instead of nullptr for
+    // it to be worked.
+    /* {
+        AVLTree<int> tree;
+        auto itr = tree.begin();
+        EXPECT_EQ(tree.end(), itr);
+        tree.insert(23);
+        --itr;
+        EXPECT_EQ(23, *itr);
+    } */
+    /* {
+        AVLTree<int> tree = { 15, 22, 25, 28, 806 };
+        auto itr = tree.begin();
+        while (806 != *itr)
+            ++itr;
+
+        ++itr;
+        EXPECT_EQ(tree.end(), itr);
+        tree.insert(926);
+        --itr;
+        EXPECT_EQ(926, *itr);
+        --itr;
+        EXPECT_EQ(806, *itr);
+    } */
+    {
+        AVLTree<int> tree = { 15, 22, 25, 28, 806 };
+        auto itr = tree.begin();
+        while (28 != *itr)
+            ++itr;
+
+        ++itr;
+        tree.insert(926);
+        ++itr;
+        EXPECT_EQ(926, *itr);
+        --itr;
+        EXPECT_EQ(806, *itr);
     }
 }

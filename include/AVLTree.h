@@ -2,6 +2,7 @@
 #define _AVL_TREE_H_
 
 #include "Nodes.h"
+#include "DoublyLinkedList.h"
 
 using swarnendu_nodes::AVL_TreeNode;
 
@@ -13,6 +14,174 @@ namespace swarnendu
         public:
             using TNode = AVL_TreeNode<T>;
             using TNodePtr = std::unique_ptr<TNode>;
+            using DList = swarnendu::DoublyLinkedList<TNode*>;
+
+            /**
+             * @brief Custom iterator structure for AVL tree.
+             *        It is a custom iterator which will enable the
+             *        traversal of the AVL tree much hassle free and hides
+             *        the internal pointer logic from the user thus user
+             *        can use this directly for any supported standard
+             *        algo as well as range based for loops.
+             *
+             */
+            struct iterator
+            {
+                public:
+                    /**
+                     * @brief Some pre conditions which defines the
+                     *        types and nature of this iterator
+                     *
+                     */
+                    using iterator_category = std::bidirectional_iterator_tag;
+                    using value_type = T;
+                    using pointer = TNode*;
+                    using reference = value_type&;
+                    using const_pointer = const TNode*;
+                    using const_reference = const value_type&;
+
+                    iterator(pointer pNode)
+                    {
+                        if (pNode)
+                        {
+                            pouplateList(pNode);
+                            m_listItr = m_list.begin();
+                        }
+                    }
+                    iterator() = default;
+                    ~iterator() = default;
+                    iterator(const iterator&) = default;
+                    iterator& operator=(const iterator&) = default;
+                    iterator(iterator&&) = default;
+                    iterator& operator=(iterator&&) = default;
+
+                    /**
+                     * @brief Post increment operator
+                     *
+                     * @return iterator Incremented iterator
+                     */
+                    iterator operator++(const int) noexcept
+                    {
+                        iterator temp = *this;
+                        m_listItr++;
+                        return temp;
+                    }
+                    /**
+                     * @brief Pre increment operator
+                     *
+                     * @return iterator Incremented iterator
+                     */
+                    iterator& operator++() noexcept
+                    {
+                        ++m_listItr;
+                        return *this;
+                    }
+                    /**
+                     * @brief Post decrement operator
+                     *
+                     * @return iterator Decremented operator
+                     */
+                    iterator operator--(const int) noexcept
+                    {
+                        iterator temp = *this;
+                        m_listItr--;
+                        return temp;
+                    }
+                    /**
+                     * @brief Pre decrement operator
+                     *
+                     * @return iterator Decremented operator
+                     */
+                    iterator& operator--() noexcept
+                    {
+                        --m_listItr;
+                        return *this;
+                    }
+                    /**
+                     * @brief Comparison operator
+                     *        Compares two ietrators for equality
+                     *
+                     * @param rhs The righ side object
+                     * @return true If the two iterators are equal, otherwise
+                     * @return false 
+                     */
+                    bool operator==(const iterator& rhs) const noexcept
+                    {
+                        return (m_listItr == rhs.m_listItr);
+                    }
+                    /**
+                     * @brief Comparison operator
+                     *        Compares two ietrators for equality
+                     *
+                     * @param rhs The righ side object
+                     * @return true If the two iterators are not equal, otherwise
+                     * @return false 
+                     */
+                    bool operator!=(const iterator& rhs) const noexcept
+                    {
+                        return (m_listItr != rhs.m_listItr);
+                    }
+                    reference operator*() const noexcept  { auto& val = m_listItr->getData()->m_data; return val; }
+                    pointer operator->()  const noexcept  { return m_listItr->getData(); }
+
+                protected:
+                    /**
+                     * @brief Populates the doubly linked list
+                     *        This method is the most crucial method
+                     *        for the iterator class to work effectively.
+                     *        Recursive in nature.
+                     *
+                     * @param pNode Root node of the tree
+                     */
+                    void pouplateList(pointer pNode)
+                    {
+                        /**
+                         * @brief The enitre iterator functionalities class for the AVL tree
+                         * rests with this method. Following is the shorthand description how
+                         * this iterator class iterates over the AVL tree
+                         *
+                         * First point to be remembered is that an inorder traversal of a BST
+                         * gives us the elements of that tree in a sorted (ascending) order. So
+                         * when an user asks for an iterator and performs increment or decrement
+                         * operation on that s/he basically performs an inorder traversal on that
+                         * tree.
+                         *
+                         * In this iterator class we take the root node (or any node of its subtrees')
+                         * in the begin/find function of the tree and we fill our doubly linked list
+                         * structure before hand by doing an inorder traversal on that root node. Once
+                         * the list is filled we just take an iterator on that list and we increment and/or
+                         * decrement that to traverse through the elements of the tree. Another catch here
+                         * is that we take the pointer to the values in the tree so that any changes in the
+                         * tree value gets reflected in the list as well.
+                         */
+                        if (pNode)
+                        {
+                            if (pNode->m_pLeft)
+                                pouplateList(pNode->m_pLeft.get());
+
+                            m_list.push_back(pNode);
+
+                            if (pNode->m_pRight)
+                                pouplateList(pNode->m_pRight.get());
+                        }
+                    }
+                    /**
+                     * @brief
+                     *
+                     */
+                public:
+                    DList m_list;
+                protected:
+                    DList::iterator m_listItr;
+                    pointer m_pNode = nullptr;
+            };
+
+            inline iterator begin() noexcept
+            {
+                m_selfItr = iterator(m_pRoot.get());
+                return m_selfItr;
+            }
+            inline iterator end() const noexcept { return iterator(); }
 
             AVLTree() = default;
             ~AVLTree() = default;
@@ -100,6 +269,7 @@ namespace swarnendu
                 if (empty())    //The tree is empty so welcome the first member of the family
                 {
                     m_pRoot = std::make_unique<TNode>(val);
+                    updateIteratorCacheForInsert(m_pRoot->getData(), false, m_pRoot.get());
                 }
                 /**
                  * @brief The tree is not empty and the value to be inserted
@@ -108,9 +278,14 @@ namespace swarnendu
                 else if (val > m_pRoot->getData())
                 {
                     if (m_pRoot->m_pRight)  //Root node has right child/children so check with them
+                    {
                         insert(val, m_pRoot->m_pRight);
+                    }
                     else
+                    {
                         m_pRoot->m_pRight = std::make_unique<TNode>(val);   //Root welcomes its first right child. Mazeltov :-)
+                        updateIteratorCacheForInsert(m_pRoot->getData(), true, m_pRoot->m_pRight.get());
+                    }
                 }
                 /**
                  * @brief The tree is not empty and the value to be inserted
@@ -119,9 +294,14 @@ namespace swarnendu
                 else if (val < m_pRoot->getData())
                 {
                     if (m_pRoot->m_pLeft)   //Root node has left child/children so check with them
+                    {
                         insert(val, m_pRoot->m_pLeft);
+                    }
                     else
+                    {
                         m_pRoot->m_pLeft = std::make_unique<TNode>(val);    //Root welcomes its first left child. Mazeltov :-)
+                        updateIteratorCacheForInsert(m_pRoot->getData(), false, m_pRoot->m_pLeft.get());
+                    }
                 }
                 // If you are hitting this else condition you need some serious introspection MAN!!
                 else
@@ -261,6 +441,8 @@ namespace swarnendu
                         pRoot->calculateHeight();
                         pRoot->calculateBalanceFactor();
                         balanceNodeTree(pRoot);
+
+                        updateIteratorCacheForInsert(pRoot->getData(), true, pRoot->m_pRight.get());
                         return;
                     }
                 }
@@ -282,6 +464,8 @@ namespace swarnendu
                         pRoot->calculateHeight();
                         pRoot->calculateBalanceFactor();
                         balanceNodeTree(pRoot);
+
+                        updateIteratorCacheForInsert(pRoot->getData(), false, pRoot->m_pLeft.get());
                         return;
                     }
                 }
@@ -536,11 +720,58 @@ namespace swarnendu
                 }
             }
             /**
+             * @brief Updates the cache used by the iterators
+             *
+             * @param val The value to be inserted into the cache
+             * @param greater Whether the value lies in the right side of its parent node
+             * @param pNode The parent node of the new value
+             */
+            void updateIteratorCacheForInsert(const T& val, const bool greater, TNode* pNode)
+            {
+               auto listItr = m_selfItr.m_list.cbegin();
+                if (listItr != m_selfItr.m_list.cend())
+                {
+                    auto tobeLastElement = false;
+                    do
+                    {
+                        if (val == listItr->getData()->getData())
+                        {
+                            if (greater)
+                            {
+                                ++listItr;
+                                if (listItr == m_selfItr.m_list.cend())
+                                    tobeLastElement = true;
+                            }
+                            break;
+                        }
+                        else
+                        {
+                            ++listItr;
+                        }
+                    } while (listItr != m_selfItr.m_list.cend());
+
+                    if (tobeLastElement)
+                    {
+                        m_selfItr.m_list.push_back(pNode);
+                    }
+                    else if (listItr != m_selfItr.m_list.cend())
+                    {
+                        m_selfItr.m_list.insert(listItr, pNode);
+                    }
+                }
+                else
+                {
+                    m_selfItr.m_list.push_back(pNode);
+                }
+            }
+            /**
              * @brief 
              * 
              */
             TNodePtr m_pRoot;
             size_t m_size = 0;
+
+            iterator m_selfItr;
     };
 }   // namespace swarnendu
 
