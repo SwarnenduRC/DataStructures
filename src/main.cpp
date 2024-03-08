@@ -7,6 +7,7 @@
 #include "BSTTest.h"
 #include "AvlTreeNodeTest.h"
 #include "AVLTreeTest.h"
+#include "GraphTest.h"
 
 int main(int argc, char** argv)
 {
